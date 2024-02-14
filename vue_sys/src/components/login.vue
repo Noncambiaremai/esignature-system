@@ -1,7 +1,53 @@
 <template>
   <div class="login">
-    <el-form ref="loginForm" class="login-form">
-      <h3 class="title">欢迎登录高校绿色通道系统</h3>
+    <el-form v-if="enrollflag" ref="enrollForm" class="enroll-form">
+      <el-form-item prop="phonenumber">
+        <el-input
+          type="text"
+          auto-complete="off"
+          placeholder="手机号"
+        >
+          <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon" />
+        </el-input>
+      </el-form-item>
+      <el-form-item prop="password">
+        <el-input
+          type="password"
+          auto-complete="off"
+          placeholder="密码"
+        >
+          <svg-icon slot="prefix" icon-class="password" class="el-input__icon input-icon" />
+        </el-input>
+      </el-form-item>
+
+      <el-form-item prop="abaaba">
+        <el-input
+          type="password"
+          auto-complete="off"
+          placeholder="阿巴阿巴"
+        >
+          <svg-icon slot="prefix" icon-class="abaaba" class="el-input__icon input-icon" />
+        </el-input>
+      </el-form-item>
+
+      <el-form-item style="width:100%;">
+        <el-button
+          size="medium"
+          type="primary"
+          style="width: 150px"
+        >注 册</el-button>
+        <el-button
+          size="medium"
+          type="primary"
+          style="width: 150px"
+          @click="goback"
+        >返 回</el-button>
+
+      </el-form-item>
+    </el-form>
+
+    <el-form v-if="!enrollflag" ref="loginForm" class="login-form">
+      <h3 class="title">欢迎登录手势识别电子签名系统</h3>
       <el-form-item prop="username">
         <el-input
           type="text"
@@ -21,51 +67,63 @@
         </el-input>
       </el-form-item>
 
-      <el-form-item prop="role">
-        <el-select placeholder="身份">
-          <el-option>
-          </el-option>
-        </el-select>
-      </el-form-item>
       <el-form-item style="width:100%;">
         <el-button
           size="medium"
           type="primary"
-          style="width:100%;"
-        >
-          <!--loading==false-->
-          <span>登 录</span>
-          <span>登 录 中...</span>
-        </el-button>
-        <div style="float: right;" v-if="register">
-          <router-link class="link-type" :to="'/register'">立即注册</router-link>
-        </div>
+          style="width: 150px"
+        >登 录</el-button>
+        <el-button
+          size="medium"
+          type="primary"
+          style="width: 150px"
+          @click="toenroll"
+        >注 册</el-button>
+
+
+
+        <el-button size="medium" type="primary"
+                   @click="gotomenu">go to menu</el-button>
+        <!--<el-button @click="callbackend">call back end</el-button>-->
       </el-form-item>
     </el-form>
-    <!--  底部  -->
-    <div class="el-login-footer">
-      <span></span>
-    </div>
-
-    <!--登录说明-->
-    <el-dialog custom-class="openAnimAbcd" title="登录说明" :visible.sync="open" width="600px" append-to-body top="20vh!important">
-      <div style="margin-top:-50px;margin-bottom: 0px">
-        <el-divider></el-divider>
-        <p>
-          1、登录的账号：学生学号或教师工作证号，默认初始密码为账号后6位。
-        </p>
-        <p>
-          2、若忘记密码请联系管理员（邮箱<b>admin123@ugcs.com</b>）重置密码，密码将重置为初始密码。
-        </p>
-      </div>
-    </el-dialog>
-
   </div>
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
-      name: "login"
+    name: "login",
+    data() {
+      return {
+        enrollflag: false
+      };
+    },
+    created(){
+      this.enrollflag = false;
+    },
+    methods: {
+      // 注册按钮跳转
+      toenroll(){
+        this.enrollflag = true;
+
+      },
+      goback(){
+        this.enrollflag = false;
+      },
+
+      gotomenu() {
+        this.$router.push({path: '/menu'});
+
+      },
+/*
+      callbackend() {
+        axios.get('/api/hello/index').then(response => {
+          console.log(response.data);
+        });
+      }*/
+  }
 
     }
 </script>
@@ -76,8 +134,13 @@ export default {
     justify-content: center;
     align-items: center;
     height: 100%;
-    /*background-image: url("../assets/images/login-bg.jpg");*/
+    width: 100%;
+    background-image: url("../assets/login-bg.jpg");
     background-size: cover;
+    background-position: center;
+    position: fixed;
+    top: 0;
+    left: 0;
   }
 
   .title {
@@ -91,9 +154,6 @@ export default {
     background: #ffffff;
     width: 400px;
     padding: 25px 25px 5px 25px;
-  }
-  .login-form .el-input {
-    height: 38px;
   }
   .login-form .el-input input {
     height: 38px;
