@@ -3,8 +3,13 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/your_database_name
+    url: jdbc:mysql://localhost:3306/esignature
     username: root
     password: sqlsqlsql
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+    jpa:
+      hibernate:
+        ddl-auto: update # 自动更新数据库表结构，可以根据需要修改
+      show-sql: true # 在控制台显示 SQL 语句，方便调试
 
