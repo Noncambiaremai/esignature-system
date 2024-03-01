@@ -118,39 +118,6 @@ export default {
         }
       },
 
-      initializeMediaPipe() {
-        this.faceMesh = new mediapipe.FaceMesh({
-          locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`,
-        });
-        this.faceMesh.setOptions({
-          maxNumFaces: 1,
-          minDetectionConfidence: 0.5,
-          minTrackingConfidence: 0.5,
-        });
-      },
-      detectFaces() {
-        const onResults = (results) => {
-          if (results.multiFaceLandmarks) {
-            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            results.multiFaceLandmarks.forEach((face) => {
-              // this.drawFace(face);
-            });
-          }
-        };
-
-        this.faceMesh.onResults(onResults);
-
-        const camera = new mediapipe.Camera(this.video, {
-          onFrame: async () => {
-            await this.faceMesh.send({ image: this.video });
-          },
-          width: 640,
-          height: 480,
-        });
-
-        camera.start();
-      },
-
       }
 
             // callbackend() {
