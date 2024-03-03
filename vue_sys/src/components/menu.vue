@@ -62,6 +62,10 @@
   .el-aside {
     /*color: #4d785c;*/
   }
+  .el-button:focus {
+    outline: none;
+  }
+
 </style>
 
 <script>
