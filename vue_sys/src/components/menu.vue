@@ -1,49 +1,31 @@
 <template>
   <div>
     <el-container style="width: 100vw; height: 100vh; border: 1px solid #eee">
-      <el-aside width="200px;">
+      <el-aside width="15%">
+        <!--width="200px;"-->
         <!--style="background-color: rgb(238, 241, 246); "-->
-        <el-menu style="height: 100%;" :default-openeds="['1', '3']">
-              <el-menu-item index="1-1" @click="gotoHome">首页</el-menu-item>
-              <el-menu-item index="1-2">添加签名</el-menu-item>
+        <el-menu style="height: 100%;">
+              <el-menu-item index="1-1" @click="gotoHome"><i class="el-icon-house"></i>首页</el-menu-item>
+              <el-menu-item index="1-2" @click="gotoAddSig"><i class="el-icon-thumb"></i>添加签名</el-menu-item>
+              <el-menu-item index="1-3" @click="gotoMySig"><i class="el-icon-files"></i>我的签名</el-menu-item>
+              <el-menu-item index="1-4" @click="gotoMyDoc"><i class="el-icon-notebook-2"></i>我的文件</el-menu-item>
+              <el-menu-item index="1-5" @click="gotoRecord"><i class="el-icon-time"></i>签名日志</el-menu-item>
 
-            <el-menu-item-group title="分组2">
-              <el-menu-item index="1-3">选项3</el-menu-item>
-            </el-menu-item-group>
-            <el-submenu index="1-4">
-              <template slot="title">选项4</template>
-              <el-menu-item index="1-4-1">选项4-1</el-menu-item>
-            </el-submenu>
-          <el-submenu index="2">
-            <template slot="title"><i class="el-icon-menu"></i>导航二</template>
-            <el-menu-item-group>
-              <template slot="title">分组一</template>
-              <el-menu-item index="2-1">选项1</el-menu-item>
-              <el-menu-item index="2-2">选项2</el-menu-item>
-            </el-menu-item-group>
-            <el-menu-item-group title="分组2">
-              <el-menu-item index="2-3">选项3</el-menu-item>
-            </el-menu-item-group>
-            <el-submenu index="2-4">
-              <template slot="title">选项4</template>
-              <el-menu-item index="2-4-1">选项4-1</el-menu-item>
-            </el-submenu>
-          </el-submenu>
-          <el-submenu index="3">
-            <template slot="title"><i class="el-icon-setting"></i>导航三</template>
-            <el-menu-item-group>
-              <template slot="title">分组一</template>
-              <el-menu-item index="3-1">选项1</el-menu-item>
-              <el-menu-item index="3-2">选项2</el-menu-item>
-            </el-menu-item-group>
-            <el-menu-item-group title="分组2">
-              <el-menu-item index="3-3">选项3</el-menu-item>
-            </el-menu-item-group>
-            <el-submenu index="3-4">
-              <template slot="title">选项4</template>
-              <el-menu-item index="3-4-1">选项4-1</el-menu-item>
-            </el-submenu>
-          </el-submenu>
+          <!--<el-submenu index="2">-->
+            <!--<template slot="title"><i class="el-icon-menu"></i>导航二</template>-->
+            <!--<el-menu-item-group>-->
+              <!--<template slot="title">分组一</template>-->
+              <!--<el-menu-item index="2-1">选项1</el-menu-item>-->
+              <!--<el-menu-item index="2-2">选项2</el-menu-item>-->
+            <!--</el-menu-item-group>-->
+            <!--<el-menu-item-group title="分组2">-->
+              <!--<el-menu-item index="2-3">选项3</el-menu-item>-->
+            <!--</el-menu-item-group>-->
+            <!--<el-submenu index="2-4">-->
+              <!--<template slot="title">选项4</template>-->
+              <!--<el-menu-item index="2-4-1">选项4-1</el-menu-item>-->
+            <!--</el-submenu>-->
+          <!--</el-submenu>-->
         </el-menu>
       </el-aside>
 
@@ -98,12 +80,21 @@ export default {
       }
     },
     methods: {
-      gotologin() {
-        this.$router.push({name: 'login'});
-      },
       gotoHome() {
         this.$router.push({name: 'home'});
-      }
+      },
+      gotoAddSig() {
+        this.$router.push({name: 'addsig'});
+      },
+      gotoMySig() {
+        this.$router.push({name: 'mysig'});
+      },
+      gotoMyDoc() {
+        this.$router.push({name: 'mydoc'});
+      },
+      gotoRecord() {
+        this.$router.push({name: 'record'});
+      },
     }
   };
 </script>
