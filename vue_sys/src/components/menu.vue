@@ -4,8 +4,8 @@
       <el-aside width="200px;">
         <!--style="background-color: rgb(238, 241, 246); "-->
         <el-menu style="height: 100%;" :default-openeds="['1', '3']">
-              <el-menu-item index="1-1" @click="gotologin">选项1</el-menu-item>
-              <el-menu-item index="1-2">选项2</el-menu-item>
+              <el-menu-item index="1-1" @click="gotoHome">首页</el-menu-item>
+              <el-menu-item index="1-2">添加签名</el-menu-item>
 
             <el-menu-item-group title="分组2">
               <el-menu-item index="1-3">选项3</el-menu-item>
@@ -57,7 +57,7 @@
               <el-dropdown-item>删除</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
-          <span>王小虎</span>
+          <span>momo</span>
         </el-header>
 
         <el-main>
@@ -90,7 +90,7 @@ export default {
     data() {
       const item = {
         date: '2016-05-02',
-        name: '王小虎',
+        name: 'momo',
         address: '上海市普陀区金沙江路 1518 弄'
       };
       return {
@@ -100,6 +100,9 @@ export default {
     methods: {
       gotologin() {
         this.$router.push({name: 'login'});
+      },
+      gotoHome() {
+        this.$router.push({name: 'home'});
       }
     }
   };
