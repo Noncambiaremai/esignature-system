@@ -87,7 +87,7 @@ export default {
       },
 
       gotomenu() {
-        this.$router.push({path: '/menu'});
+        this.$router.push({name: 'menu'});
       },
 
       turnCamera() {
