@@ -5,6 +5,7 @@ import menu from '@/components/menu';
 import home from '@/components/home';
 import addsig from '@/components/addsig';
 import mysig from '@/components/mysig';
+import adddoc from '@/components/adddoc';
 import mydoc from '@/components/mydoc';
 import record from '@/components/record';
 
@@ -36,6 +37,11 @@ export default new Router({
       path: '/mysig',
       name: 'mysig',
       component: mysig
+    },
+    {
+      path: '/adddoc',
+      name: 'adddoc',
+      component: adddoc
     },
     {
       path: '/mydoc',

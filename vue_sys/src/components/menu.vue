@@ -8,8 +8,9 @@
               <el-menu-item index="1-1" @click="gotoHome"><i class="el-icon-house"></i>首页</el-menu-item>
               <el-menu-item index="1-2" @click="gotoAddSig"><i class="el-icon-thumb"></i>添加签名</el-menu-item>
               <el-menu-item index="1-3" @click="gotoMySig"><i class="el-icon-files"></i>我的签名</el-menu-item>
-              <el-menu-item index="1-4" @click="gotoMyDoc"><i class="el-icon-notebook-2"></i>我的文件</el-menu-item>
-              <el-menu-item index="1-5" @click="gotoRecord"><i class="el-icon-time"></i>签名日志</el-menu-item>
+              <el-menu-item index="1-4" @click="gotoAddDoc"><i class="el-icon-document-add"></i>添加文件</el-menu-item>
+              <el-menu-item index="1-5" @click="gotoMyDoc"><i class="el-icon-notebook-2"></i>我的文件</el-menu-item>
+              <el-menu-item index="1-6" @click="gotoRecord"><i class="el-icon-time"></i>签名日志</el-menu-item>
 
           <!--<el-submenu index="2">-->
             <!--<template slot="title"><i class="el-icon-menu"></i>导航二</template>-->
@@ -92,6 +93,9 @@ export default {
       },
       gotoMySig() {
         this.$router.push({name: 'mysig'});
+      },
+      gotoAddDoc() {
+        this.$router.push({name: 'adddoc'});
       },
       gotoMyDoc() {
         this.$router.push({name: 'mydoc'});
