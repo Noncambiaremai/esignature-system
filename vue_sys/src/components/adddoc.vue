@@ -3,13 +3,15 @@
     <Menu>
       <el-upload
         style="float: left"
-        class="upload-demo"
+        class="upload"
         drag
-        action="https://jsonplaceholder.typicode.com/posts/"
+        action="http://localhost:8080/api/doc/upload"
+        :on-success="handleSuccess"
+        :before-upload="beforeUpload"
         multiple>
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-        <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+        <div class="el-upload__tip" slot="tip">可接受文件格式：word / pdf / excel</div>
       </el-upload>
     </Menu>
   </div>
@@ -25,21 +27,29 @@ import Menu from "@/components/menu.vue";
         },
         data() {
           return {
-            fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}]
-          };
+            fileList: [
+              // {
+              //   name: 'food.jpeg',
+              //   url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+              // },
+            ]
+          }
         },
         methods: {
-          handleRemove(file, fileList) {
-            console.log(file, fileList);
+          handleSuccess(response, file, fileList) {
+            // 文件上传成功后的处理逻辑 response为后端返回数据
+            console.log(response);
+            this.$message.success('文件上传成功');
           },
-          handlePreview(file) {
-            console.log(file);
-          },
-          handleExceed(files, fileList) {
-            this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
-          },
-          beforeRemove(file, fileList) {
-            return this.$confirm(`确定移除 ${ file.name }？`);
+          beforeUpload(file) {
+            // console.log('文件名', file.name);
+            const extension = file.name.split('.').pop(); // 获取文件扩展名
+            // console.log('文件扩展名', extension);
+            if (!['pdf', 'docx', 'xlsx'].includes(extension)) {
+              this.$message.error('只能上传word、pdf或excel格式的文件');
+              return false; // 取消上传
+            }
+            return true; // 允许上传
           }
         }
     }
