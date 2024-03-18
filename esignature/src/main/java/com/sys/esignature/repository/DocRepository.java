@@ -1,5 +1,6 @@
 package com.sys.esignature.repository;
 
+import com.sys.esignature.entity.Document;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,6 +10,7 @@ import javax.persistence.Query;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 @Repository
 @Transactional
@@ -33,5 +35,12 @@ public class DocRepository {
         nativeQuery.setParameter("update_time", update_time);
         nativeQuery.setParameter("user_id", user_id);
         nativeQuery.executeUpdate();
+    }
+
+    public List<Document> selectAllByUserId() {
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT * FROM document WHERE is_deleted = 0");
+        Query nativeQuery = entityManager.createNativeQuery(sql.toString());
+        return nativeQuery.getResultList();
     }
 }

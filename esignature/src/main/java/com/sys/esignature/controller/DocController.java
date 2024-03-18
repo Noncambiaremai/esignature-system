@@ -1,5 +1,6 @@
 package com.sys.esignature.controller;
 
+import com.sys.esignature.entity.Document;
 import com.sys.esignature.entity.User;
 import com.sys.esignature.service.DocService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +20,6 @@ public class DocController {
 
     @Autowired
     private DocService docService;
-
-//    @PostMapping("/upload")
-//    public List<User> getUser(@RequestBody User user) {
-//        return userService.getUser(user);
-//    }
 
     @CrossOrigin(origins = "http://localhost:8081")
     @RequestMapping("/upload")
@@ -51,14 +47,8 @@ public class DocController {
             String doc_path = UPLOAD_PATH + "/" + doc_name + "." + doc_type;
 
             // 插入数据库
-            // id自增 doc_id = id
-            // doc_name doc_type doc_path update_time
-            // doc_status默认0 download_count默认0
-            // user_id默认0 is_deleted默认0
             // user_id 还没写
             docService.uploadFiles(doc_name, doc_type, doc_path, timeStamp);
-
-
 
             // 将文件保存到指定路径
             File dest = new File(doc_path);
@@ -70,6 +60,11 @@ public class DocController {
             e.printStackTrace();
             return "上传失败：" + e.getMessage();
         }
+    }
+
+    @GetMapping("/selectAllByUserId")
+    public List<Document> selectAllByUserId() {
+        return docService.selectAllByUserId();
     }
 
 }
