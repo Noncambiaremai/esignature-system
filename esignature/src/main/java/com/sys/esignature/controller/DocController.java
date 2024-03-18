@@ -42,7 +42,7 @@ public class DocController {
 
             // 得到当前时间戳 格式化时间戳为字符串
             long timeStamp = System.currentTimeMillis();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
             String formattedTimeStamp = sdf.format(new Date(timeStamp));
 
             // xxx_date
