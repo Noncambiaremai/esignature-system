@@ -123,6 +123,29 @@ import Menu from "@/components/menu.vue";
             }).catch(error => {
               console.error('Failed to fetch file list:', error);
             });
+          },
+          handleDelete(index, row) {
+            this.$confirm('确定删除该文件?', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              // 在这里添加对文件的后端处理
+              // console.log(row[1]);
+              //
+              axios.get('/api/doc/deleteDocByDocId',
+                { params: { doc_id: row[1] }}).then(response => {});
+              this.selectFileList();
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              });
+            }).catch(() => {
+              this.$message({
+                type: 'info',
+                message: '已取消删除'
+              });
+            });
           }
         }
     }
