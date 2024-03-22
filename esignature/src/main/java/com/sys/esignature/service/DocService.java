@@ -19,4 +19,8 @@ public class DocService {
     public List<Document> selectAllByUserId() {
         return docRepository.selectAllByUserId();
     }
+
+    public boolean deleteDocByDocId(Integer doc_id) {
+        return docRepository.deleteDocByDocId(doc_id);
+    }
 }

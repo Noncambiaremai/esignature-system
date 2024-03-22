@@ -62,9 +62,14 @@ public class DocController {
         }
     }
 
+    // UserId还没传进来
     @GetMapping("/selectAllByUserId")
     public List<Document> selectAllByUserId() {
         return docService.selectAllByUserId();
     }
 
+    @GetMapping("/deleteDocByDocId")
+    public boolean deleteDocByDocId(Integer doc_id) {
+        return docService.deleteDocByDocId(doc_id);
+    }
 }

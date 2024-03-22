@@ -43,4 +43,13 @@ public class DocRepository {
         Query nativeQuery = entityManager.createNativeQuery(sql.toString());
         return nativeQuery.getResultList();
     }
+
+    public boolean deleteDocByDocId(Integer doc_id) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("UPDATE document SET is_deleted = 1 WHERE doc_id = :doc_id");
+        Query nativeQuery = entityManager.createNativeQuery(sql.toString());
+        nativeQuery.setParameter("doc_id", doc_id);
+        nativeQuery.executeUpdate();
+        return true;
+    }
 }
