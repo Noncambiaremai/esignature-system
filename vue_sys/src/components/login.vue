@@ -44,7 +44,7 @@
       </el-form-item>
 
       <el-form-item style="width:100%;">
-        <el-button size="medium" type="primary" style="width: 150px">登 录</el-button>
+        <el-button size="medium" type="primary" style="width: 150px" @click="tologin">登 录</el-button>
         <el-button size="medium" type="primary" style="width: 150px" @click="toenroll">注 册</el-button>
 
         <el-button size="medium" type="primary"
@@ -82,6 +82,10 @@ export default {
       toenroll(){
         this.enrollflag = true;
       },
+      tologin(){
+        this.$router.push({name: 'test'});
+      },
+
       goback(){
         this.enrollflag = false;
       },

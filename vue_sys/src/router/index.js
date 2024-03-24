@@ -8,6 +8,7 @@ import mysig from '@/components/mysig';
 import adddoc from '@/components/adddoc';
 import mydoc from '@/components/mydoc';
 import record from '@/components/record';
+import test from '@/components/test';
 
 Vue.use(Router)
 
@@ -52,6 +53,12 @@ export default new Router({
       path: '/record',
       name: 'record',
       component: record
+    },
+
+    {
+      path: '/test',
+      name: 'test',
+      component: test
     },
   ]
 })
