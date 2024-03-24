@@ -15,21 +15,21 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button style="width: 400px" @click="turnCamera">打开 / 关闭摄像头</el-button>
+        <el-button style="width: 400px" @click="toggleCamera">打开 / 关闭摄像头</el-button>
       </el-form-item>
 
       <el-form-item label="摄像头">
-        <video ref="videoElement" class="input_video"></video>
-        <canvas ref="canvasElement"  class="output_canvas" width="850px" height="480px"></canvas>
+        <div class="container" v-show="cameraVisible">
+          <video ref="videoElement" class="input_video"></video>
+          <canvas ref="canvasElement" class="output_canvas" width="400px" height="300px"></canvas>
+        </div>
       </el-form-item>
-
 
       <el-form-item style="width:100%;">
         <el-button size="medium" type="primary" style="width: 150px">注 册</el-button>
         <el-button size="medium" type="primary" style="width: 150px" @click="goback">返 回</el-button>
       </el-form-item>
     </el-form>
-
 
   </div>
 </template>
@@ -77,8 +77,8 @@
           onFrame: async () => {
             await this.faceMesh.send({image: this.videoElement});
           },
-          width: 850,
-          height: 480
+          // width: 850,
+          // height: 480
         });
         this.camera.start();
       },
@@ -106,13 +106,24 @@
       },
       goback() {
         this.$router.push({name: 'login'});
-      }
+      },
+      toggleCamera() {
+        this.cameraVisible = !this.cameraVisible;
+        if (this.cameraVisible) {
+          this.startFaceDetection();
+        } else {
+          this.stopFaceDetection();
+        }
+      },
+      stopFaceDetection() {
+        if (this.camera) {
+          this.camera.stop();
+          this.camera = null;
+        }
+      },
     },
     mounted() {
       this.initFaceMesh();
-      this.cameraVisible = false;
-
-      this.startFaceDetection();
     },
   }
 </script>
