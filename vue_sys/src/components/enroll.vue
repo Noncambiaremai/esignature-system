@@ -18,8 +18,8 @@
         <el-button style="width: 400px" @click="toggleCamera">打开 / 关闭摄像头</el-button>
       </el-form-item>
 
-      <el-form-item label="摄像头">
-        <div class="container" v-show="cameraVisible">
+      <el-form-item v-show="cameraVisible" label="摄像头">
+        <div class="container" >
           <video ref="videoElement" class="input_video"></video>
           <canvas ref="canvasElement" class="output_canvas" width="400px" height="300px"></canvas>
         </div>
@@ -43,7 +43,7 @@
   import { drawConnectors } from '@mediapipe/drawing_utils/drawing_utils.js';
 
   export default {
-    name: "test",
+    name: "enroll",
     data() {
       return {
         cameraVisible: false,

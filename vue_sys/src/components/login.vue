@@ -33,7 +33,7 @@ export default {
     methods: {
       // 注册按钮跳转
       toenroll(){
-        this.$router.push({name: 'test'});
+        this.$router.push({name: 'enroll'});
       },
       gotomenu() {
         this.$router.push({name: 'menu'});
