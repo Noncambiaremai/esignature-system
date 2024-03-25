@@ -10,11 +10,16 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "@mediapipe/camera_utils": "^0.3.1675466862",
+    "@mediapipe/control_utils": "^0.6.1675466023",
+    "@mediapipe/drawing_utils": "^0.3.1675466124",
+    "@mediapipe/face_mesh": "^0.4.1633559619",
     "axios": "^1.5.0",
     "css-loader": "^3.6.0",
     "element-ui": "^2.15.14",
     "node-sass": "^6.0.1",
     "sass-loader": "^10.5.2",
+    "socket.io-client": "^4.7.4",
     "stylus": "^0.62.0",
     "vue": "^2.5.2",
     "vue-hot-reload-api": "^2.3.4",
