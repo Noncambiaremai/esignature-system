@@ -1,12 +1,18 @@
 <template>
   <div>
-    <Menu>
-      <el-button style="width: 400px" @click="toggleCamera">打开 / 关闭摄像头</el-button>
-      <div class="container" v-show="cameraVisible">
-        <video class="input_video"></video>
-        <canvas class="output_canvas" width="400px" height="300px"></canvas>
+    <Menu class="menu">
+      <div class="camera-control">
+        <el-button style="width: 400px; height: 100px; font-size: 19px; font-family: PingFang SC"
+                   @click="toggleCamera">打开 / 关闭摄像头</el-button>
+        <div class="container" v-show="cameraVisible">
+          <video class="input_video"></video>
+          <canvas class="output_canvas" width="440px" height="310px"></canvas>
+        </div>
       </div>
     </Menu>
+    <div class="canvas-container">
+      <canvas class="signature_canvas"></canvas>
+    </div>
   </div>
 </template>
 
@@ -56,8 +62,8 @@
           onFrame: async () => {
             await this.hands.send({ image: this.videoElement });
           },
-          // width: 1280,
-          // height: 720
+          width: 440,
+          height: 310
         });
         this.camera.start();
       },
@@ -96,9 +102,41 @@
   }
 </script>
 
-
 <style scoped>
   .input_video {
     display: none;
+  }
+  .menu {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .camera-control {
+    margin-left: 60px; /* 与菜单栏的间距 */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px; /* 按钮和摄像头之间的内边距 */
+    height: 320px;
+  }
+  .container {
+    width: calc(100% - 400px); /* 摄像头下方画布宽度为除菜单外的屏幕宽度 */
+    margin-bottom: 5px; /* 摄像头与下方画布之间的垂直间距 */
+  }
+  .canvas-container {
+    position: static;
+    margin-left: 280px; /* 与菜单栏的间距 */
+  }
+  .signature_canvas {
+    width: calc(100% - 350px); /* 画布宽度为除菜单外的屏幕宽度减去按钮宽度 */
+    height: 350px; /* 设置画布高度 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+    box-sizing: border-box;
+    border-radius: 4px;
+    border: 2px dashed #cccccc;
+    position: absolute;
+    bottom: 0;
+    left: 280px; /* 左边与菜单栏对齐 */
   }
 </style>
