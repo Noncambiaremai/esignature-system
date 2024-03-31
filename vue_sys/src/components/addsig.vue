@@ -42,6 +42,7 @@
         cameraVisible: false,
         sigCanvas: null,
         sigCanvasCtx: null,
+        lastFingerDistance: 0, // 上一次两个手指的距离
       };
     },
     methods: {
@@ -89,25 +90,42 @@
             if (landmarks[8] && landmarks[12]) {
               const distance = Math.sqrt(Math.pow(landmarks[8].x - landmarks[12].x, 2)
                 + Math.pow(landmarks[8].y - landmarks[12].y, 2));
-              const threshold = 0.1;
+              const threshold = 0.15;
 
               if (distance > threshold) {
                 const xC = landmarks[8].x;
                 const yC = landmarks[8].y;
                 const x = xC * this.sigCanvas.width;
                 const y = yC * this.sigCanvas.height;
-                this.drawFingerPoint(x, y); // 直接绘制手指位置
+                this.drawFingerPoint(x, y);
               }
+              else {
+                // 不画线 重新定位点
+                this.lastFingerDistance = 0; // 重置上一次的距离
+              }
+
+              // 更新上一次两个手指的距离
+              this.lastFingerDistance = distance;
             }
           }
         }
         this.canvasCtx.restore();
       },
       drawFingerPoint(x, y) {
-        this.sigCanvasCtx.fillStyle = '#00000c';
-        this.sigCanvasCtx.beginPath();
-        this.sigCanvasCtx.arc(x, y, 4, 0, Math.PI * 2);
-        this.sigCanvasCtx.fill();
+        // 如果上一次的两个手指的距离大于阈值，则从上一个点绘制直线
+        if (this.lastFingerDistance > 0.15) {
+          this.sigCanvasCtx.strokeStyle = '#00000c';
+          this.sigCanvasCtx.lineWidth = 4;
+
+          this.sigCanvasCtx.beginPath();
+          this.sigCanvasCtx.moveTo(this.lastX, this.lastY); // 从上一个点开始
+          this.sigCanvasCtx.lineTo(x, y); // 到当前点
+          this.sigCanvasCtx.stroke();
+        }
+
+        // 保存当前点的坐标作为下一次的起点
+        this.lastX = x;
+        this.lastY = y;
       },
       toggleCamera() {
         this.cameraVisible = !this.cameraVisible;
