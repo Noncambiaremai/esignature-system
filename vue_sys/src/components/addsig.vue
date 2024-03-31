@@ -5,8 +5,8 @@
         <div>
           <el-button round style="width: 300px; height: 70px; font-size: 19px; font-family: PingFang SC"
                      @click="toggleCamera">打开 / 关闭摄像头</el-button>
-          <!--<el-button round style="width: 300px; height: 70px; font-size: 19px; font-family: PingFang SC"-->
-                     <!--@click="clearSigCanvas">清空画布</el-button>-->
+          <el-button round style="width: 300px; height: 70px; font-size: 19px; font-family: PingFang SC"
+                     @click="clearSigCanvas">清除手指轨迹</el-button>
         </div>
         <div class="container" v-show="cameraVisible">
           <video class="input_video"></video>
@@ -35,24 +35,13 @@
     data() {
       return {
         videoElement: null,
-
-        // 用于绘制手指关键点的画布
         canvasElement: null,
         canvasCtx: null,
-
         hands: null,
         camera: null,
         cameraVisible: false,
-
-        // 用于绘制手指轨迹的画布
         sigCanvas: null,
         sigCanvasCtx: null,
-        fingerPath: [], // 用于存储手指轨迹的数组
-        fingerPoint: [], // 用于存储食指点数组
-
-        sampleInterval: 0.5, // 修改采样间隔，表示每隔多少帧记录一次手指位置
-        frameCounter: 0, // 用于计数当前帧数
-
       };
     },
     methods: {
@@ -61,10 +50,8 @@
         this.videoElement = document.getElementsByClassName('input_video')[0];
         this.canvasElement = document.getElementsByClassName('output_canvas')[0];
         this.canvasCtx = this.canvasElement.getContext('2d');
-
         this.sigCanvas = document.getElementsByClassName('signature_canvas')[0];
         this.sigCanvasCtx = this.sigCanvas.getContext('2d');
-
         this.hands = new Hands({
           locateFile: (file) => {
             return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
@@ -76,7 +63,6 @@
           minDetectionConfidence: 0.5,
           minTrackingConfidence: 0.5
         });
-
         this.hands.onResults(this.onResults);
       },
       startHandDetection() {
@@ -99,101 +85,30 @@
           for (const landmarks of results.multiHandLandmarks) {
             drawConnectors(this.canvasCtx, landmarks, HAND_CONNECTIONS, { color: '#00FF00', lineWidth: 5 });
             drawLandmarks(this.canvasCtx, landmarks, { color: '#FF0000', lineWidth: 2 });
-          }
 
-          // 检查是否需要记录手指位置
-          if (this.frameCounter === 0) {
-            if (results.multiHandLandmarks[0] && results.multiHandLandmarks[0][8]
-             && results.multiHandLandmarks[0][12]) {
+            if (landmarks[8] && landmarks[12]) {
+              const distance = Math.sqrt(Math.pow(landmarks[8].x - landmarks[12].x, 2)
+                + Math.pow(landmarks[8].y - landmarks[12].y, 2));
+              const threshold = 0.1;
 
-              // 计算食指和中指之间的距离
-              const distance = Math.sqrt(Math.pow(results.multiHandLandmarks[0][8].x - results.multiHandLandmarks[0][12].x, 2)
-                + Math.pow(results.multiHandLandmarks[0][8].y - results.multiHandLandmarks[0][12].y, 2));
-              // 设置距离阈值
-              const threshold = 0.1; // 根据实际情况调整阈值
-
-              if (distance > threshold) { // 两手指距离分开 也就是可以留下轨迹的时候
-                const xC = results.multiHandLandmarks[0][8].x;
-                const yC = results.multiHandLandmarks[0][8].y;
-                this.fingerPath.push({ x: xC * this.sigCanvas.width, y: yC * this.sigCanvas.height });
-                this.drawFingerPath(); // 在新的画布上绘制手指轨迹
+              if (distance > threshold) {
+                const xC = landmarks[8].x;
+                const yC = landmarks[8].y;
+                const x = xC * this.sigCanvas.width;
+                const y = yC * this.sigCanvas.height;
+                this.drawFingerPoint(x, y); // 直接绘制手指位置
               }
-
-              this.fingerPoint.push({ x: results.multiHandLandmarks[0][8].x * this.sigCanvas.width, y: results.multiHandLandmarks[0][8].y * this.sigCanvas.height });
-              this.drawFingerPoint();
             }
           }
-
-          // 更新帧数计数器
-          this.frameCounter = (this.frameCounter + 1) % this.sampleInterval;
         }
         this.canvasCtx.restore();
       },
-
-      // 直线
-      // drawFingerPath() {
-      //   this.sigCanvasCtx.clearRect(0, 0, this.sigCanvas.width, this.sigCanvas.height);
-      //   this.sigCanvasCtx.strokeStyle = '#00000c';
-      //   this.sigCanvasCtx.lineWidth = 4;
-      //   this.sigCanvasCtx.beginPath();
-      //   const firstPoint = this.fingerPath[0];
-      //   this.sigCanvasCtx.moveTo(firstPoint.x, firstPoint.y);
-      //   for (let i = 1; i < this.fingerPath.length; i++) {
-      //     const currentPoint = this.fingerPath[i];
-      //     const previousPoint = this.fingerPath[i - 1];
-      //     const controlPointX = (currentPoint.x + previousPoint.x) / 2;
-      //     const controlPointY = (currentPoint.y + previousPoint.y) / 2;
-      //     this.sigCanvasCtx.quadraticCurveTo(previousPoint.x, previousPoint.y, controlPointX, controlPointY);
-      //   }
-      //   this.sigCanvasCtx.stroke();
-      // },
-
-      // 点
-      // drawFingerPath() {
-      //   this.sigCanvasCtx.clearRect(0, 0, this.sigCanvas.width, this.sigCanvas.height);
-      //   this.sigCanvasCtx.fillStyle = '#00000c';
-      //   this.sigCanvasCtx.lineWidth = 4;
-      //
-      //   for (let i = 0; i < this.fingerPath.length; i++) {
-      //     const { x, y } = this.fingerPath[i];
-      //     this.sigCanvasCtx.beginPath();
-      //     this.sigCanvasCtx.arc(x, y, 3, 0, Math.PI * 2); // 使用 arc 方法绘制圆形
-      //     this.sigCanvasCtx.fill(); // 填充圆形
-      //   }
-      // },
-
-      drawFingerPath() {
-        // 清除画布
-        this.sigCanvasCtx.clearRect(0, 0, this.sigCanvas.width, this.sigCanvas.height);
-
-        // 绘制手指轨迹
-        this.sigCanvasCtx.fillStyle = '#00000c'; // 设置轨迹点的颜色
-        for (let i = 0; i < this.fingerPath.length; i++) {
-          const { x, y } = this.fingerPath[i];
-          this.sigCanvasCtx.beginPath();
-          this.sigCanvasCtx.arc(x, y, 4, 0, Math.PI * 2); // 绘制一个小点
-          this.sigCanvasCtx.fill();
-        }
+      drawFingerPoint(x, y) {
+        this.sigCanvasCtx.fillStyle = '#00000c';
+        this.sigCanvasCtx.beginPath();
+        this.sigCanvasCtx.arc(x, y, 4, 0, Math.PI * 2);
+        this.sigCanvasCtx.fill();
       },
-
-      drawFingerPoint() {
-        // 绘制手指的投影位置
-        if (this.fingerPoint.length > 0) {
-          const { x, y } = this.fingerPoint[this.fingerPoint.length - 1]; // 获取最后一个手指位置
-          this.sigCanvasCtx.beginPath();
-          this.sigCanvasCtx.arc(x, y, 5, 0, Math.PI * 2); // 绘制一个大点来表示手指的当前位置
-          this.sigCanvasCtx.fillStyle = 'red'; // 设置手指投影位置的颜色
-          this.sigCanvasCtx.globalAlpha = Math.abs(Math.sin(Date.now() / 500)); // 根据时间变换透明度
-          this.sigCanvasCtx.fill();
-          this.sigCanvasCtx.globalAlpha = 1; // 恢复透明度
-
-          // 每隔一段时间重绘一次
-          requestAnimationFrame(this.drawFingerPoint.bind(this));
-        }
-      },
-
-
-
       toggleCamera() {
         this.cameraVisible = !this.cameraVisible;
         if (this.cameraVisible) {
@@ -217,6 +132,7 @@
     }
   }
 </script>
+
 
 <style scoped>
   .input_video {
