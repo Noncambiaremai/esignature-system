@@ -87,16 +87,21 @@
             drawConnectors(this.canvasCtx, landmarks, HAND_CONNECTIONS, { color: '#00FF00', lineWidth: 5 });
             drawLandmarks(this.canvasCtx, landmarks, { color: '#FF0000', lineWidth: 2 });
 
-            if (landmarks[8] && landmarks[12]) {
-              const distance = Math.sqrt(Math.pow(landmarks[8].x - landmarks[12].x, 2)
-                + Math.pow(landmarks[8].y - landmarks[12].y, 2));
-              const threshold = 0.15;
+            if (landmarks[8] && landmarks[4]) {
+              const distance = Math.sqrt(Math.pow(landmarks[8].x - landmarks[4].x, 2)
+                + Math.pow(landmarks[8].y - landmarks[4].y, 2));
+              const threshold = 0.23;
 
-              if (distance > threshold) {
+              console.log("dis");
+              console.log(distance);
+
+              if (distance < threshold) {
+
                 const xC = landmarks[8].x;
                 const yC = landmarks[8].y;
+
                 const x = xC * this.sigCanvas.width;
-                const y = yC * this.sigCanvas.height;
+                const y = yC * this.sigCanvas.height * 1.42;
                 this.drawFingerPoint(x, y);
               }
               else {
@@ -113,7 +118,7 @@
       },
       drawFingerPoint(x, y) {
         // 如果上一次的两个手指的距离大于阈值，则从上一个点绘制直线
-        if (this.lastFingerDistance > 0.15) {
+        if (this.lastFingerDistance < 0.23) {
           this.sigCanvasCtx.strokeStyle = '#00000c';
           this.sigCanvasCtx.lineWidth = 4;
 
@@ -150,7 +155,6 @@
     }
   }
 </script>
-
 
 <style scoped>
   .input_video {
