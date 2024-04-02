@@ -2,11 +2,13 @@
   <div>
     <Menu class="menu">
       <div class="camera-control">
-        <div>
-          <el-button round style="width: 300px; height: 70px; font-size: 19px; font-family: PingFang SC"
+        <div style="display: flex; flex-direction: column;">
+          <el-button round style="width: 300px; height: 70px; font-size: 19px; font-family: PingFang SC; margin-bottom: 10px;"
                      @click="toggleCamera">打开 / 关闭摄像头</el-button>
-          <el-button round style="width: 300px; height: 70px; font-size: 19px; font-family: PingFang SC"
+          <el-button round style="width: 300px; height: 70px; font-size: 19px; font-family: PingFang SC; margin-bottom: 10px;"
                      @click="clearSigCanvas">清除手指轨迹</el-button>
+          <el-button round style="width: 300px; height: 70px; font-size: 19px; font-family: PingFang SC; margin-bottom: 10px;"
+                     @click="saveSig">保存签名轨迹</el-button>
         </div>
         <div class="container" v-show="cameraVisible">
           <video class="input_video"></video>
@@ -14,10 +16,25 @@
                   style="transform: scaleX(-1) !important;"></canvas>
         </div>
       </div>
+      <div class="canvas-container">
+        <canvas class="signature_canvas" style="transform: scaleX(-1) !important;"></canvas>
+      </div>
     </Menu>
-    <div class="canvas-container">
-      <canvas class="signature_canvas" style="transform: scaleX(-1) !important;"></canvas>
-    </div>
+
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogVisible"
+      width="30%">
+      <div>
+        <p>是否保存签名？</p>
+        <img :src="mirroredImageData" alt="Mirrored Image">
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handleUpload">确 定</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -40,6 +57,8 @@
         hands: null,
         camera: null,
         cameraVisible: false,
+        dialogVisible: false,
+        mirroredImageData: '',
         sigCanvas: null,
         sigCanvasCtx: null,
         lastFingerDistance: 0, // 上一次两个手指的距离
@@ -91,9 +110,6 @@
               const distance = Math.sqrt(Math.pow(landmarks[8].x - landmarks[4].x, 2)
                 + Math.pow(landmarks[8].y - landmarks[4].y, 2));
               const threshold = 0.23;
-
-              console.log("dis");
-              console.log(distance);
 
               if (distance < threshold) {
 
@@ -148,6 +164,34 @@
       },
       clearSigCanvas() {
         this.sigCanvasCtx.clearRect(0, 0, this.sigCanvas.width, this.sigCanvas.height);
+      },
+      saveSig() {
+        this.dialogVisible = true;
+
+        // 创建一个新的 Canvas 元素
+        const mirroredCanvas = document.createElement('canvas');
+        const mirroredCtx = mirroredCanvas.getContext('2d');
+
+        // 设置 Canvas 尺寸与 sigCanvas 相同
+        mirroredCanvas.width = this.sigCanvas.width;
+        mirroredCanvas.height = this.sigCanvas.height;
+
+        // 在 Canvas 上绘制镜像图像
+        mirroredCtx.translate(mirroredCanvas.width, 0);
+        mirroredCtx.scale(-1, 1);
+        mirroredCtx.drawImage(this.sigCanvas, 0, 0, mirroredCanvas.width, mirroredCanvas.height);
+
+        // 获取镜像后的图像数据
+        this.mirroredImageData = mirroredCanvas.toDataURL('image/png');
+
+        // 输出
+        console.log(this.mirroredImageData);
+      },
+
+      handleUpload() {
+        this.dialogVisible = false;
+
+        // 调用后端
       }
     },
     mounted() {
