@@ -14,13 +14,12 @@
           </div>
         </el-table-column>
 
-
         <el-table-column
-          label="签名创建日期"
+          label="签名创建时间"
           style="width: 20%">
           <template slot-scope="scope">
             <i class="el-icon-time"></i>
-            <span style="margin-left: 10px">{{ scope.row.date }}</span>
+            <span style="margin-left: 10px">{{ new Date(scope.row[4]).toLocaleString()}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -28,10 +27,8 @@
           style="width: 20%">
           <template slot-scope="scope">
             <el-popover trigger="hover" placement="top">
-              <p>姓名: {{ scope.row.name }}</p>
-              <p>住址: {{ scope.row.address }}</p>
               <div slot="reference" class="name-wrapper">
-                <el-tag size="medium">{{ scope.row.name }}</el-tag>
+                <el-tag size="medium">{{ scope.row[2] }}</el-tag>
               </div>
             </el-popover>
           </template>
@@ -53,6 +50,7 @@
 </template>
 
 <script>
+  import axios from 'axios';
   import Menu from "@/components/menu.vue";
     export default {
         name: "mysig",
@@ -61,33 +59,29 @@
         },
         data() {
           return {
-            tableData: [{
-              date: '2016-05-02',
-              name: '王小虎',
-              address: '上海市普陀区金沙江路 1518 弄'
-            }, {
-              date: '2016-05-04',
-              name: '王小虎',
-              address: '上海市普陀区金沙江路 1517 弄'
-            }, {
-              date: '2016-05-01',
-              name: '王小虎',
-              address: '上海市普陀区金沙江路 1519 弄'
-            }, {
-              date: '2016-05-03',
-              name: '王小虎',
-              address: '上海市普陀区金沙江路 1516 弄'
-            }],
+            tableData: [],
             src: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg'
           }
         },
+        created() {
+          this.selectSigList();
+        },
         methods: {
-          handleEdit(index, row) {
-            console.log(index, row);
+          selectSigList() {
+            axios.get('/api/sig/selectAllByUserId').then(response => {
+              this.tableData = response.data;
+              console.log(this.tableData);
+            }).catch(error => {
+              console.error('Failed to fetch signature list:', error);
+            });
           },
-          handleDelete(index, row) {
-            console.log(index, row);
-          }
+
+          // handleEdit(index, row) {
+          //   console.log(index, row);
+          // },
+          // handleDelete(index, row) {
+          //   console.log(index, row);
+          // }
         }
     }
 </script>

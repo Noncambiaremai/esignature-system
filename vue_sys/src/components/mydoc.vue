@@ -1,40 +1,15 @@
 <template>
   <div>
     <Menu>
-
       <el-table
         :data="tableData"
         style="width: 100%">
-        <!--<el-table-column type="expand" style="width: 20%">-->
-          <!--<div class="block">-->
-            <!--<el-image :src="src" style="width: 50%; height: 30%;" fit="contain">-->
-              <!--<div slot="placeholder" class="image-slot">-->
-                <!--加载中<span class="dot">...</span>-->
-              <!--</div>-->
-            <!--</el-image>-->
-          <!--</div>-->
-        <!--</el-table-column>-->
-
-        <!--<el-table-column-->
-          <!--label="文件上传日期"-->
-          <!--style="width: 16%">-->
-          <!--<template slot-scope="scope">-->
-            <!--<i class="el-icon-time"></i>-->
-            <!--<span style="margin-left: 10px">{{ scope.row[5].substring(0, 10)}}</span>-->
-          <!--</template>-->
-        <!--</el-table-column>-->
-        
         <el-table-column
           label="文件名称"
           style="width: 25%">
           <template slot-scope="scope">
             <el-popover trigger="hover" placement="top" class="custom-popover">
-              <p>文件上传时间: {{ scope.row[2].slice(-14,-10) + "-" +
-                                 scope.row[2].slice(-10,-8) + "-" +
-                                 scope.row[2].slice(-8,-6) + " " +
-                                 scope.row[2].slice(-6,-4) + ":" +
-                                 scope.row[2].slice(-4,-2) + ":" +
-                                 scope.row[2].slice(-2)
+              <p>文件上传时间: {{ new Date(scope.row[5]).toLocaleString()
               }}</p>
               <div slot="reference" class="name-wrapper">
                 <el-tag size="medium">{{ scope.row[2] }}</el-tag>
