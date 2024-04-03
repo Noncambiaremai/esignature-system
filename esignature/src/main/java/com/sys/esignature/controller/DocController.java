@@ -69,7 +69,16 @@ public class DocController {
     }
 
     @GetMapping("/deleteDocByDocId")
-    public boolean deleteDocByDocId(Integer doc_id) {
+    public boolean deleteDocByDocId(Integer doc_id, String doc_path) {
+        // 创建 File 对象表示要删除的文件
+        File fileToDelete = new File(doc_path);
+        // 检查文件是否存在
+        if (fileToDelete.exists()) {
+            boolean deleted = fileToDelete.delete();
+            if (deleted) System.out.println("文件删除成功!");
+            else System.out.println("文件删除失败!");
+        } else System.out.println("文件不存在，无需删除");
+
         return docService.deleteDocByDocId(doc_id);
     }
 }
