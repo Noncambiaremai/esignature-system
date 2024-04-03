@@ -1,15 +1,11 @@
 package com.sys.esignature.controller;
 
-import org.apache.commons.io.FileUtils;
 import com.sys.esignature.service.SigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;

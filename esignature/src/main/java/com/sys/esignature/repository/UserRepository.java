@@ -15,9 +15,9 @@ public class UserRepository {
     private EntityManager entityManager;
 
     public List<User> getUser(User user) {
-        System.out.println("dao");
-        System.out.println(user.getUserId());
-        System.out.println(user.getUserPassword());
+//        System.out.println("dao");
+//        System.out.println(user.getUserId());
+//        System.out.println(user.getUserPassword());
         String userId = user.getUserId();
         String userPassword = user.getUserPassword();
 
