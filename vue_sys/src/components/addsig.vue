@@ -43,6 +43,7 @@
   import { Camera } from '@mediapipe/camera_utils/camera_utils.js';
   import { drawConnectors, drawLandmarks } from '@mediapipe/drawing_utils/drawing_utils.js';
   import { Hands, HAND_CONNECTIONS } from '@mediapipe/hands/hands.js';
+  import axios from 'axios';
 
   export default {
     name: "addsig",
@@ -176,6 +177,10 @@
         mirroredCanvas.width = this.sigCanvas.width;
         mirroredCanvas.height = this.sigCanvas.height;
 
+        // 在 Canvas 上绘制白色背景
+        mirroredCtx.fillStyle = '#FFFFFF'; // 设置填充颜色为白色
+        mirroredCtx.fillRect(0, 0, mirroredCanvas.width, mirroredCanvas.height); // 绘制矩形
+
         // 在 Canvas 上绘制镜像图像
         mirroredCtx.translate(mirroredCanvas.width, 0);
         mirroredCtx.scale(-1, 1);
@@ -183,15 +188,29 @@
 
         // 获取镜像后的图像数据
         this.mirroredImageData = mirroredCanvas.toDataURL('image/png');
-
-        // 输出
-        console.log(this.mirroredImageData);
       },
 
       handleUpload() {
         this.dialogVisible = false;
-
         // 调用后端
+        const formData = new FormData();
+        formData.append('imageDataUrl', this.mirroredImageData);
+
+        axios.post('/api/sig/upload', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+          .then(response => {
+            console.log(response.data);
+            if (response.data === '签名上传成功') {
+              this.$message.success('签名上传成功');
+            }
+            else this.$message.error('签名上传失败');
+          })
+          .catch(error => {
+            console.error('Error uploading image:', error);
+          });
       }
     },
     mounted() {
