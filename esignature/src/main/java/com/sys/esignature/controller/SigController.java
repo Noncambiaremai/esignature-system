@@ -1,5 +1,6 @@
 package com.sys.esignature.controller;
 
+import com.sys.esignature.entity.Signature;
 import com.sys.esignature.service.SigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -57,11 +59,11 @@ public class SigController {
         }
     }
 
-//    // UserId还没传进来
-//    @GetMapping("/selectAllByUserId")
-//    public List<Document> selectAllByUserId() {
-//        return docService.selectAllByUserId();
-//    }
+    // UserId还没传进来
+    @GetMapping("/selectAllByUserId")
+    public List<Signature> selectAllByUserId() {
+        return sigService.selectAllByUserId();
+    }
 //
 //    @GetMapping("/deleteDocByDocId")
 //    public boolean deleteDocByDocId(Integer doc_id) {
