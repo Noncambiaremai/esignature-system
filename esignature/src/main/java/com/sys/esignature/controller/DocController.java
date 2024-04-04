@@ -9,9 +9,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/doc")
@@ -64,8 +66,25 @@ public class DocController {
 
     // UserId还没传进来
     @GetMapping("/selectAllByUserId")
-    public List<Document> selectAllByUserId() {
-        return docService.selectAllByUserId();
+    public List<Map<String, Object>> selectAllByUserId() {
+        List<Document> documents = docService.selectAllByUserId();
+        List<Map<String, Object>> documentsWithImage = new ArrayList<>();
+
+        for (Document document : documents) {
+            Map<String, Object> documentMap = new HashMap<>();
+            documentMap.put("id", document.getId());
+            documentMap.put("doc_id", document.getDocId());
+            documentMap.put("doc_name", document.getDocName());
+            documentMap.put("doc_type", document.getDocType());
+            documentMap.put("doc_path", document.getDocPath());
+            documentMap.put("update_time", document.getUpdateTime());
+            documentMap.put("doc_status", document.getDocStatus());
+            documentMap.put("download_count", document.getDownloadCount());
+//
+            documentsWithImage.add(documentMap);
+        }
+        System.out.println(documentsWithImage);
+        return documentsWithImage;
     }
 
     @GetMapping("/deleteDocByDocId")

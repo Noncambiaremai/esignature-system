@@ -9,8 +9,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Repository
 @Transactional
@@ -38,10 +37,12 @@ public class DocRepository {
     }
 
     public List<Document> selectAllByUserId() {
-        StringBuilder sql = new StringBuilder();
-        sql.append("SELECT * FROM document WHERE is_deleted = 0");
-        Query nativeQuery = entityManager.createNativeQuery(sql.toString());
-        return nativeQuery.getResultList();
+        String sql = "SELECT * FROM document WHERE is_deleted = 0";
+        List<Document> documents = entityManager
+                .createNativeQuery(sql, Document.class) // 将查询结果映射为Document对象
+//                .setParameter("userId", userId)
+                .getResultList();
+        return documents;
     }
 
     public boolean deleteDocByDocId(Integer doc_id) {
