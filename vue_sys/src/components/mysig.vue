@@ -19,7 +19,7 @@
           style="width: 20%">
           <template slot-scope="scope">
             <i class="el-icon-time"></i>
-            <span style="margin-left: 10px">{{ new Date(scope.row[4]).toLocaleString()}}</span>
+            <span style="margin-left: 10px">{{ new Date(scope.row.create_time).toLocaleString()}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -28,7 +28,7 @@
           <template slot-scope="scope">
             <el-popover trigger="hover" placement="top">
               <div slot="reference" class="name-wrapper">
-                <el-tag size="medium">{{ scope.row[2] }}</el-tag>
+                <el-tag size="medium">{{ scope.row.sig_name }}</el-tag>
               </div>
             </el-popover>
           </template>

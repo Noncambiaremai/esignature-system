@@ -36,9 +36,11 @@ public class SigRepository {
     }
 
     public List<Signature> selectAllByUserId() {
-        StringBuilder sql = new StringBuilder();
-        sql.append("SELECT * FROM signature WHERE is_deleted = 0");
-        Query nativeQuery = entityManager.createNativeQuery(sql.toString());
-        return nativeQuery.getResultList();
+        String sql = "SELECT * FROM signature WHERE is_deleted = 0";
+        List<Signature> signature = entityManager
+                .createNativeQuery(sql, Signature.class) // Signature
+//                .setParameter("userId", userId)
+                .getResultList();
+        return signature;
     }
 }

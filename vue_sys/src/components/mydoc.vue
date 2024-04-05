@@ -9,10 +9,10 @@
           style="width: 25%">
           <template slot-scope="scope">
             <el-popover trigger="hover" placement="top" class="custom-popover">
-              <p>文件上传时间: {{ new Date(scope.row[5]).toLocaleString()
+              <p>文件上传时间: {{ new Date(scope.row.update_time).toLocaleString()
               }}</p>
               <div slot="reference" class="name-wrapper">
-                <el-tag size="medium">{{ scope.row[2] }}</el-tag>
+                <el-tag size="medium">{{ scope.row.doc_name }}</el-tag>
               </div>
             </el-popover>
           </template>
@@ -23,7 +23,7 @@
           style="width: 13%">
           <template slot-scope="scope">
               <div slot="reference" class="name-wrapper">
-                <el-tag size="medium">{{ scope.row[3] }}</el-tag>
+                <el-tag size="medium">{{ scope.row.doc_type }}</el-tag>
               </div>
           </template>
         </el-table-column>
@@ -33,7 +33,7 @@
           style="width: 13%">
           <template slot-scope="scope">
               <div slot="reference" class="name-wrapper">
-                <el-tag size="medium">{{ scope.row[6] === 0 ? '未签名' : '已签名' }}</el-tag>
+                <el-tag size="medium">{{ scope.row.doc_status === false ? '未签名' : '已签名' }}</el-tag>
               </div>
           </template>
         </el-table-column>
@@ -43,7 +43,7 @@
           style="width: 13%">
           <template slot-scope="scope">
               <div slot="reference" class="name-wrapper">
-                <el-tag size="medium">{{ scope.row[7] }}</el-tag>
+                <el-tag size="medium">{{ scope.row.download_count }}</el-tag>
               </div>
           </template>
         </el-table-column>

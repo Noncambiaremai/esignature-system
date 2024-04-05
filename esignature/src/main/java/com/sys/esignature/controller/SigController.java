@@ -8,9 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @CrossOrigin
@@ -61,8 +59,21 @@ public class SigController {
 
     // UserId还没传进来
     @GetMapping("/selectAllByUserId")
-    public List<Signature> selectAllByUserId() {
-        return sigService.selectAllByUserId();
+    public List<Map<String, Object>> selectAllByUserId() {
+        List<Signature> signatures = sigService.selectAllByUserId();
+        List<Map<String, Object>> signaturesWithImage = new ArrayList<>();
+
+        for (Signature signature : signatures) {
+            Map<String, Object> signatureMap = new HashMap<>();
+            signatureMap.put("id", signature.getId());
+            signatureMap.put("sig_id", signature.getSigId());
+            signatureMap.put("sig_name", signature.getSigName());
+            signatureMap.put("sig_path", signature.getSigPath());
+            signatureMap.put("create_time", signature.getCreateTime());
+            signaturesWithImage.add(signatureMap);
+        }
+        System.out.println(signaturesWithImage);
+        return signaturesWithImage;
     }
 //
 //    @GetMapping("/deleteDocByDocId")
