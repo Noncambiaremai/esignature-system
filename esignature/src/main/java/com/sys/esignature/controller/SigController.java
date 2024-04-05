@@ -5,6 +5,7 @@ import com.sys.esignature.service.SigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -79,19 +80,26 @@ public class SigController {
                 // 将字节数组转换为 Base64 编码的字符串
                 String base64Image = Base64.getEncoder().encodeToString(imageBytes);
                 signatureMap.put("image", "data:image/jpeg;base64," + base64Image);
-                System.out.println("data:image/jpeg;base64," + base64Image);
             } catch (IOException e) {
                 // 处理异常，这里可以根据具体情况进行处理
                 e.printStackTrace();
             }
             signaturesWithImage.add(signatureMap);
         }
-//        System.out.println(signaturesWithImage);
         return signaturesWithImage;
     }
-//
-//    @GetMapping("/deleteDocByDocId")
-//    public boolean deleteDocByDocId(Integer doc_id) {
-//        return docService.deleteDocByDocId(doc_id);
-//    }
+
+    @GetMapping("/deleteSigBySigId")
+    public boolean deleteSigBySigId(Integer sig_id, String sig_path) {
+        // 创建 File 对象表示要删除的文件
+        File imageToDelete = new File(sig_path);
+        // 检查文件是否存在
+        if (imageToDelete.exists()) {
+            boolean deleted = imageToDelete.delete();
+            if (deleted) System.out.println("文件删除成功!");
+            else System.out.println("文件删除失败!");
+        } else System.out.println("文件不存在，无需删除");
+
+        return sigService.deleteSigBySigId(sig_id);
+    }
 }

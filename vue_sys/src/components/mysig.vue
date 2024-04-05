@@ -33,9 +33,6 @@
           <template slot-scope="scope">
             <el-button
               size="mini"
-              @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button
-              size="mini"
               type="danger"
               @click="handleDelete(scope.$index, scope.row)">删除</el-button>
           </template>
@@ -76,6 +73,20 @@
           // handleDelete(index, row) {
           //   console.log(index, row);
           // }
+          handleDelete(index, row) {
+            this.$confirm('确定删除该签名?', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              // 调用后端接口删除文件
+              axios.get('/api/sig/deleteSigBySigId',
+                { params: { sig_id: row.sig_id, sig_path: row.sig_path }}).then(response => {});
+              window.location.reload();
+              this.$message({ type: 'success', message: '删除成功!' });
+            }).catch(() => { this.$message({ type: 'info', message: '已取消删除' });
+            });
+          }
         }
     }
 </script>

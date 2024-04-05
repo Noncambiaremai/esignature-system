@@ -19,4 +19,8 @@ public class SigService {
     public List<Signature> selectAllByUserId() {
         return sigRepository.selectAllByUserId();
     }
+
+    public boolean deleteSigBySigId(Integer sig_id) {
+        return sigRepository.deleteSigBySigId(sig_id);
+    }
 }

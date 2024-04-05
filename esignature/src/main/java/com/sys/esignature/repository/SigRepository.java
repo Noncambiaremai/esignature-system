@@ -43,4 +43,13 @@ public class SigRepository {
                 .getResultList();
         return signature;
     }
+
+    public boolean deleteSigBySigId(Integer sig_id) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("UPDATE signature SET is_deleted = 1 WHERE sig_id = :sig_id");
+        Query nativeQuery = entityManager.createNativeQuery(sql.toString());
+        nativeQuery.setParameter("sig_id", sig_id);
+        nativeQuery.executeUpdate();
+        return true;
+    }
 }
