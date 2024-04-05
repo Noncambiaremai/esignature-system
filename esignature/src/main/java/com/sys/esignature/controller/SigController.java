@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -70,9 +72,21 @@ public class SigController {
             signatureMap.put("sig_name", signature.getSigName());
             signatureMap.put("sig_path", signature.getSigPath());
             signatureMap.put("create_time", signature.getCreateTime());
+
+            try {
+                // 读取图片内容为字节数组
+                byte[] imageBytes = Files.readAllBytes(Paths.get(signature.getSigPath()));
+                // 将字节数组转换为 Base64 编码的字符串
+                String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+                signatureMap.put("image", "data:image/jpeg;base64," + base64Image);
+                System.out.println("data:image/jpeg;base64," + base64Image);
+            } catch (IOException e) {
+                // 处理异常，这里可以根据具体情况进行处理
+                e.printStackTrace();
+            }
             signaturesWithImage.add(signatureMap);
         }
-        System.out.println(signaturesWithImage);
+//        System.out.println(signaturesWithImage);
         return signaturesWithImage;
     }
 //

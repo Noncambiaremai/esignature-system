@@ -4,14 +4,10 @@
       <el-table
         :data="tableData"
         style="width: 100%">
-        <el-table-column type="expand" style="width: 20%">
-          <div class="block">
-            <el-image :src="src" style="width: 50%; height: 30%;" fit="contain">
-              <div slot="placeholder" class="image-slot">
-                加载中<span class="dot">...</span>
-              </div>
-            </el-image>
-          </div>
+        <el-table-column label="签名图片" style="width: 20%">
+            <template slot-scope="scope">
+              <img :src="scope.row.image" style="width: 50%; height: 25%;" alt="图片">
+            </template>
         </el-table-column>
 
         <el-table-column
@@ -22,17 +18,17 @@
             <span style="margin-left: 10px">{{ new Date(scope.row.create_time).toLocaleString()}}</span>
           </template>
         </el-table-column>
+
         <el-table-column
           label="签名名称"
           style="width: 20%">
           <template slot-scope="scope">
-            <el-popover trigger="hover" placement="top">
               <div slot="reference" class="name-wrapper">
                 <el-tag size="medium">{{ scope.row.sig_name }}</el-tag>
               </div>
-            </el-popover>
           </template>
         </el-table-column>
+
         <el-table-column label="操作" style="width: 20%">
           <template slot-scope="scope">
             <el-button
@@ -60,7 +56,6 @@
         data() {
           return {
             tableData: [],
-            src: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg'
           }
         },
         created() {
@@ -75,7 +70,6 @@
               console.error('Failed to fetch signature list:', error);
             });
           },
-
           // handleEdit(index, row) {
           //   console.log(index, row);
           // },
