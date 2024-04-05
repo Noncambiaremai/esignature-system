@@ -107,7 +107,7 @@ import Menu from "@/components/menu.vue";
             }).then(() => {
               // 调用后端接口删除文件
               axios.get('/api/doc/deleteDocByDocId',
-                { params: { doc_id: row[1], doc_path: row[4] }}).then(response => {});
+                { params: { doc_id: row.doc_id, doc_path: row.doc_path }}).then(response => {});
               window.location.reload();
               this.$message({ type: 'success', message: '删除成功!' });
             }).catch(() => { this.$message({ type: 'info', message: '已取消删除' });
