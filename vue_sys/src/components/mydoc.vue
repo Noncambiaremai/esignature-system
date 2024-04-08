@@ -17,7 +17,6 @@
             </el-popover>
           </template>
         </el-table-column>
-
         <el-table-column
           label="文件类型"
           style="width: 13%">
@@ -27,7 +26,6 @@
               </div>
           </template>
         </el-table-column>
-
         <el-table-column
           label="文件状态"
           style="width: 13%">
@@ -37,7 +35,6 @@
               </div>
           </template>
         </el-table-column>
-
         <el-table-column
           label="文件下载次数"
           style="width: 13%">
@@ -47,7 +44,6 @@
               </div>
           </template>
         </el-table-column>
-
         <el-table-column label="操作" style="width: 30%">
           <template slot-scope="scope">
             <div class="button-group">
@@ -72,6 +68,7 @@
         </el-table-column>
       </el-table>
 
+      <!--点击添加签名之后的dialog-->
       <el-dialog :visible.sync="dialogTableVisible">
         <el-table :data="sigTableData">
           <el-table-column label="签名图片" style="width: 20%">
@@ -106,6 +103,18 @@
           </el-table-column>
         </el-table>
       </el-dialog>
+
+      <!--PDF部分-->
+      <el-dialog :visible.sync="previewPDFDialog">
+        <div>
+          <el-button :theme="'default'" type="submit" :title="'上一页'" @click.stop="prePage"> 上一页</el-button>
+          <el-button :theme="'default'" type="submit" :title="'下一页'" @click.stop="nextPage"> 下一页</el-button>
+          <div class="page">{{pageNum}}/{{pageTotalNum}} </div>
+        </div>
+        <PDF :src="url" :page="pageNum" @progress="loadedRatio = $event" @page-loaded="pageLoaded($event)"
+             @num-pages="pageTotalNum=$event" @error="pdfError($event)"  @link-clicked="page = $event">
+        </PDF>
+      </el-dialog>
     </Menu>
   </div>
 </template>
@@ -113,10 +122,12 @@
 <script>
 import axios from 'axios';
 import Menu from "@/components/menu.vue";
+import PDF from 'vue-pdf';
     export default {
         name: "mydoc",
         components: {
           Menu,
+          PDF,
         },
         data() {
             return {
@@ -131,6 +142,15 @@ import Menu from "@/components/menu.vue";
                 address: '上海市普陀区金沙江路 1518 弄'
               }],
               dialogTableVisible: false,
+
+              // 有关PDF的data
+              previewPDFDialog:false,
+              url: "http://storage.xuetangx.com/public_assets/xuetangx/PDF/PlayerAPI_v1.0.6.pdf",
+              pageNum: 1,
+              pageTotalNum: 1,
+              // 加载进度
+              loadedRatio: 0,
+              curPageNum: 0,
             }
         },
         created() {
@@ -156,6 +176,8 @@ import Menu from "@/components/menu.vue";
           },
           handleChoose(index, row) {
             console.log(row);
+            this.dialogTableVisible = false;
+            this.previewPDFDialog = true;
           },
           handleDelete(index, row) {
             this.$confirm('确定删除该文件?', '提示', {
@@ -170,7 +192,28 @@ import Menu from "@/components/menu.vue";
               this.$message({ type: 'success', message: '删除成功!' });
             }).catch(() => { this.$message({ type: 'info', message: '已取消删除' });
             });
-          }
+          },
+
+          // 上一页函数，
+          prePage() {
+            var page = this.pageNum
+            page = page > 1 ? page - 1 : this.pageTotalNum
+            this.pageNum = page
+          },
+          // 下一页函数
+          nextPage() {
+            var page = this.pageNum
+            page = page < this.pageTotalNum ? page + 1 : 1
+            this.pageNum = page
+          },
+          // 页面加载回调函数，其中e为当前页数
+          pageLoaded(e) {
+            this.curPageNum = e
+          },
+          // 错误时回调函数。
+          pdfError(error) {
+            console.error(error)
+          },
         }
     }
 </script>
