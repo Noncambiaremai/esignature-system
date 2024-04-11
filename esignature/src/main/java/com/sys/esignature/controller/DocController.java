@@ -87,6 +87,21 @@ public class DocController {
         return documentsWithImage;
     }
 
+    @GetMapping("/selectFileByDocPath")
+    public Map<String, Object> selectFileByDocPath(@RequestParam("filePath") String filePath) {
+        System.out.println(filePath);
+        Map<String, Object> FileMap = new HashMap<>();
+        try {
+            // 读取文件内容为字节数组
+            byte[] fileBytes = Files.readAllBytes(Paths.get(filePath));
+            // 将字节数组转换为 Base64 编码的字符串
+            String base64File = Base64.getEncoder().encodeToString(fileBytes);
+            FileMap.put("file", "data:application/octet-stream;base64," + base64File);
+        }
+        catch (IOException e) { e.printStackTrace(); }
+        return FileMap;
+    }
+
     @GetMapping("/deleteDocByDocId")
     public boolean deleteDocByDocId(Integer doc_id, String doc_path) {
         // 创建 File 对象表示要删除的文件
@@ -94,9 +109,7 @@ public class DocController {
         // 检查文件是否存在
         if (fileToDelete.exists()) {
             boolean deleted = fileToDelete.delete();
-            if (deleted) System.out.println("文件删除成功!");
-            else System.out.println("文件删除失败!");
-        } else System.out.println("文件不存在，无需删除");
+        }
 
         return docService.deleteDocByDocId(doc_id);
     }
