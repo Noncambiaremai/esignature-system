@@ -9,6 +9,7 @@ import adddoc from '@/components/adddoc';
 import mydoc from '@/components/mydoc';
 import record from '@/components/record';
 import enroll from '@/components/enroll';
+import mergePage from '@/components/mergePage';
 
 Vue.use(Router)
 
@@ -54,11 +55,15 @@ export default new Router({
       name: 'record',
       component: record
     },
-
     {
       path: '/enroll',
       name: 'enroll',
       component: enroll
     },
+    {
+      path: '/mergePage',
+      name: 'mergePage',
+      component: mergePage
+    }
   ]
 })

@@ -10,7 +10,8 @@
               <el-menu-item index="1-3" @click="gotoMySig"><i class="el-icon-files"></i>我的签名</el-menu-item>
               <el-menu-item index="1-4" @click="gotoAddDoc"><i class="el-icon-document-add"></i>添加文件</el-menu-item>
               <el-menu-item index="1-5" @click="gotoMyDoc"><i class="el-icon-notebook-2"></i>我的文件</el-menu-item>
-              <el-menu-item index="1-6" @click="gotoRecord"><i class="el-icon-time"></i>签名日志</el-menu-item>
+              <el-menu-item index="1-6" @click="gotoMergePage"><i class="el-icon-connection"></i>合成区域</el-menu-item>
+              <el-menu-item index="1-7" @click="gotoRecord"><i class="el-icon-time"></i>签名日志</el-menu-item>
 
           <!--<el-submenu index="2">-->
             <!--<template slot="title"><i class="el-icon-menu"></i>导航二</template>-->
@@ -99,6 +100,9 @@ export default {
       },
       gotoMyDoc() {
         this.$router.push({name: 'mydoc'});
+      },
+      gotoMergePage() {
+        this.$router.push({name: 'mergePage'});
       },
       gotoRecord() {
         this.$router.push({name: 'record'});
