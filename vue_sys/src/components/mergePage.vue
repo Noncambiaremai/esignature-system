@@ -17,8 +17,15 @@
                 <el-button  round style="width: 200px; height: 70px; font-size: 19px; font-family: PingFang SC; margin-bottom: 10px;"
                   :title="'下一页'" @click="clickNext"> 下一页</el-button>
               </div>
-              <div style="overflow: auto;  border: 2px solid #ccc; height: 100px">
-                <img v-show="imageData!=''" :src="imageData" alt="图片" style="max-width: 100px; max-height: 100px;">
+              <div style="display: flex;">
+                <el-button  round style="width: 200px; height: 70px; font-size: 19px; font-family: PingFang SC; margin-bottom: 10px;"
+                            @click="clickMerge">点击合成</el-button>
+                <el-button  round style="width: 200px; height: 70px; font-size: 19px; font-family: PingFang SC; margin-bottom: 10px;"
+                            @click="">保存</el-button>
+              </div>
+
+              <div style="overflow: auto;  border: 2px solid #ccc; height: 180px">
+                <img v-show="imageData!=''" :src="imageData" alt="图片">
               </div>
             </div>
           </div>
@@ -30,7 +37,7 @@
             <!--<PDF :src="pdfData" :page="pageNum" @progress="loadedRatio = $event" @page-loaded="pageLoaded($event)"-->
                  <!--@num-pages="pageTotalNum=$event" @error="pdfError($event)"  @link-clicked="page = $event">-->
             <!--</PDF>-->
-              <canvas ref="myCanvas" class="pdf-container"></canvas>
+              <canvas ref="myCanvas" class="pdf-container" @click="handleCanvasClick"></canvas>
           </div>
         </div>
 
@@ -144,6 +151,7 @@
             height: "",
             pdfbase64: "",
             // url:"http://storage.xuetangx.com/public_assets/xuetangx/PDF/PlayerAPI_v1.0.6.pdf",
+            clickPosition: { x: 0, y: 0 },
           }
       },
       created() {
@@ -238,14 +246,22 @@
                 this.pageNo = num;
 
                 // 添加图片
-                this._renderImage();
+                // this._renderImage();
               });
             });
           });
         },
 
+        handleCanvasClick(event) {
+          // 获取鼠标点击的坐标
+          const canvas = this.$refs.myCanvas;
+          const rect = canvas.getBoundingClientRect();
+          this.clickPosition.x = event.clientX - rect.left;
+          this.clickPosition.y = event.clientY - rect.top;
+        },
+
         // 在画布上渲染图片
-        _renderImage() {
+        _renderImage(x, y) {
           let canvas = this.$refs.myCanvas;
           let ctx = canvas.getContext("2d");
 
@@ -258,7 +274,7 @@
           image.onload = () => {
             // 在画布上绘制图片
             // ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-            ctx.drawImage(image, 0, 0, image.width / 3, image.height / 3);
+            ctx.drawImage(image, x, y, image.width, image.height);
           };
         },
 
@@ -283,6 +299,12 @@
           //   page = page < this.pageTotalNum ? page + 1 : 1
           //   this.pageNum = page
         },
+
+        clickMerge() {
+          // 在这里调用_renderImage()
+          // 只在一个page上加签名 不是每个page加签名
+          this._renderImage(this.clickPosition.x, this.clickPosition.y);
+        }
       }
     }
 </script>
