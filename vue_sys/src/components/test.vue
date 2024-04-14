@@ -21,13 +21,6 @@
 
   export default {
     name: "test",
-    props: {
-      watermark: {
-        type: String,
-        default: "水印文字",
-      },
-    },
-    mounted() {},
     data() {
       return {
         pageNo: null, // 当前页
@@ -37,11 +30,12 @@
         scale: 2, // 缩放值
         width: "",
         height: "",
-        base64String: ""
+        base64String: "",
       };
     },
     methods: {
       uploadFile() {
+        console.log(this.base64String);
         // 引入pdf.js的字体
         let CMAP_URL = "https://unpkg.com/pdfjs-dist@2.0.943/cmaps/";
         //读取base64的pdf流文件
@@ -72,7 +66,11 @@
             let ratio = 1;
 
             // 根据页面宽度和视口宽度的比率就是内容区的放大比率
+            // canvasCont是那个外框的ref
+            // dialogWidth表示装PDF的容器的宽度
             let dialogWidth = this.$refs["canvasCont"].offsetWidth;
+
+            // page.view[2]表示pdf页面原本的宽度
             let pageWidth = page.view[2] * ratio;
             let scale = dialogWidth / pageWidth;
             let viewport = page.getViewport({ scale });
@@ -96,7 +94,7 @@
               this.pageNo = num;
 
               // 添加水印
-              // this._renderWatermark();
+              this._renderImage();
             });
           });
         });
@@ -114,31 +112,22 @@
         return dpr / bsr;
       },
 
-      // 在画布上渲染水印
-      // _renderWatermark() {
-      //   let canvas = this.$refs.myCanvas;
-      //   let ctx = canvas.getContext("2d");
-      //   // 平铺水印
-      //   let pattern = ctx.createPattern(this._initWatermark(), "repeat");
-      //   ctx.rect(0, 0, this.width, this.height);
-      //   ctx.fillStyle = pattern;
-      //   ctx.fill();
-      // },
+      // 在画布上渲染图片
+      _renderImage() {
+        let canvas = this.$refs.myCanvas;
+        let ctx = canvas.getContext("2d");
 
-      // 生成水印图片
-      // _initWatermark() {
-      //   let canvas = document.createElement("canvas");
-      //   canvas.width = 200;
-      //   canvas.height = 200;
-      //   let ctx = canvas.getContext("2d");
-      //   ctx.rotate((-18 * Math.PI) / 180);
-      //   ctx.font = "14px Vedana";
-      //   ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
-      //   ctx.textAlign = "left";
-      //   ctx.textBaseline = "middle";
-      //   ctx.fillText(this.watermark, 50, 50);
-      //   return canvas;
-      // },
+        // 创建一个新的Image对象
+        let image = new Image();
+        // 设置图片的src为你想要添加的图片的 base64 编码字符串
+        image.src = "";
+        // 等待图片加载完成
+        image.onload = () => {
+          // 在画布上绘制图片
+          // ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+          ctx.drawImage(image, canvas.width - image.width / 3, canvas.height - image.height / 3, image.width / 3, image.height / 3);
+        };
+      },
 
       clickPre() {
         // 当前页面未被渲染 && 还有上一页
