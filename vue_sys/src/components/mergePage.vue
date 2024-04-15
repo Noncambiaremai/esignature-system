@@ -19,13 +19,18 @@
               </div>
               <div style="display: flex;">
                 <el-button  round style="width: 200px; height: 70px; font-size: 19px; font-family: PingFang SC; margin-bottom: 10px;"
-                            @click="clickMerge">点击合成</el-button>
+                            @click="clickMerge">添加签名</el-button>
                 <el-button  round style="width: 200px; height: 70px; font-size: 19px; font-family: PingFang SC; margin-bottom: 10px;"
                             @click="">保存</el-button>
               </div>
 
-              <div style="overflow: auto;  border: 2px solid #ccc; height: 180px">
-                <img v-show="imageData!=''" :src="imageData" alt="图片">
+              <div class="block">
+                <span class="demonstration">调整签名图片大小</span>
+                <el-slider v-model="imageScale" :min="0.3" :max="1.4" :step="0.01"></el-slider>
+              </div>
+
+              <div class="image-container">
+                <img v-show="imageData!=''" :src="imageData" :style="{ transform: 'scale(' + imageScale + ')' }"  alt="图片">
               </div>
             </div>
           </div>
@@ -152,6 +157,8 @@
             pdfbase64: "",
             // url:"http://storage.xuetangx.com/public_assets/xuetangx/PDF/PlayerAPI_v1.0.6.pdf",
             clickPosition: { x: 0, y: 0 },
+
+            imageScale: 1,
           }
       },
       created() {
@@ -274,7 +281,7 @@
           image.onload = () => {
             // 在画布上绘制图片
             // ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-            ctx.drawImage(image, x, y, image.width, image.height);
+            ctx.drawImage(image, x, y, image.width * this.imageScale, image.height * this.imageScale);
           };
         },
 
@@ -321,5 +328,13 @@
   .pdf-container {
     width: 100%;
     height: 100%;
+  }
+  .image-container {
+    overflow: auto;
+    border: 2px solid #ccc;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 </style>
