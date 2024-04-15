@@ -19,7 +19,7 @@
               </div>
               <div style="display: flex;">
                 <el-button  round style="width: 200px; height: 70px; font-size: 19px; font-family: PingFang SC; margin-bottom: 10px;"
-                            @click="clickMerge">添加签名</el-button>
+                            @click="clearFileAndImage">清空</el-button>
                 <el-button  round style="width: 200px; height: 70px; font-size: 19px; font-family: PingFang SC; margin-bottom: 10px;"
                             @click="">保存</el-button>
               </div>
@@ -32,6 +32,11 @@
               <div class="image-container">
                 <img v-show="imageData!=''" :src="imageData" :style="{ transform: 'scale(' + imageScale + ')' }"  alt="图片">
               </div>
+
+              <div style="margin-top: 15px;">
+                <el-card class="box-card" style="font-size: 19px; font-family: PingFang SC;">点击右侧文件任意位置可添加签名图片</el-card>
+              </div>
+
             </div>
           </div>
 
@@ -200,7 +205,7 @@
           this.filedialogTableVisible = false;
           axios.get('/api/doc/selectFileByDocPath',
             { params: { filePath: row.doc_path }}).then(response => {
-            console.log(response.data.file);
+            // console.log(response.data.file);
             this.pdfbase64 = response.data.file;
 
             // 引入pdf.js的字体
@@ -251,9 +256,6 @@
               page.render(renderContext).promise.then(() => {
                 this.renderingPage = false;
                 this.pageNo = num;
-
-                // 添加图片
-                // this._renderImage();
               });
             });
           });
@@ -265,6 +267,7 @@
           const rect = canvas.getBoundingClientRect();
           this.clickPosition.x = event.clientX - rect.left;
           this.clickPosition.y = event.clientY - rect.top;
+          this._renderImage(this.clickPosition.x, this.clickPosition.y);
         },
 
         // 在画布上渲染图片
@@ -275,12 +278,10 @@
           // 创建一个新的Image对象
           let image = new Image();
           // 设置图片的src为你想要添加的图片的 base64 编码字符串
-          // image.src = "";
           image.src = this.imageData;
           // 等待图片加载完成
           image.onload = () => {
             // 在画布上绘制图片
-            // ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
             ctx.drawImage(image, x, y, image.width * this.imageScale, image.height * this.imageScale);
           };
         },
@@ -307,11 +308,17 @@
           //   this.pageNum = page
         },
 
-        clickMerge() {
-          // 在这里调用_renderImage()
-          // 只在一个page上加签名 不是每个page加签名
-          this._renderImage(this.clickPosition.x, this.clickPosition.y);
-        }
+        clearFileAndImage() {
+          this.imageData = "";
+          this.pdfbase64 = "";
+          this.pdfData = null;
+          this.pageNo = null;
+          this.pdfPageNumber = null;
+          
+          let canvas = this.$refs.myCanvas;
+          let ctx = canvas.getContext("2d");
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        },
       }
     }
 </script>
