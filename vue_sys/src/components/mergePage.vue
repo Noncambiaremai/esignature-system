@@ -6,22 +6,17 @@
           <div style="width: 45%; margin-right: 15px;">
             <div style="display: flex;  flex-direction: column;">
               <div style="display: flex;">
-                <el-button round style="width: 200px; height: 70px; font-size: 19px; font-family: PingFang SC; margin-bottom: 10px;"
-                                            @click="startChooseSig">选择签名</el-button>
-                <el-button round style="width: 200px; height: 70px; font-size: 19px; font-family: PingFang SC; margin-bottom: 10px;"
-                           @click="startChooseFile">选择文件</el-button>
+                <el-button class="left-button" @click="startChooseSig">选择签名</el-button>
+                <el-button class="left-button" @click="startChooseFile">选择文件</el-button>
               </div>
               <div style="display: flex;">
-                <el-button  round style="width: 200px; height: 70px; font-size: 19px; font-family: PingFang SC; margin-bottom: 10px;"
-                  :title="'上一页'" @click="clickPre"> 上一页</el-button>
-                <el-button  round style="width: 200px; height: 70px; font-size: 19px; font-family: PingFang SC; margin-bottom: 10px;"
-                  :title="'下一页'" @click="clickNext"> 下一页</el-button>
+                <el-button class="left-button" @click="clickPre"> 上一页</el-button>
+                <el-button class="left-button"@click="clickNext"> 下一页</el-button>
               </div>
               <div style="display: flex;">
-                <el-button  round style="width: 200px; height: 70px; font-size: 19px; font-family: PingFang SC; margin-bottom: 10px;"
+                <el-button class="left-button"
                             @click="clearFileAndImage">清空</el-button>
-                <el-button  round style="width: 200px; height: 70px; font-size: 19px; font-family: PingFang SC; margin-bottom: 10px;"
-                            @click="">保存</el-button>
+                <el-button class="left-button" @click="saveFile">保存</el-button>
               </div>
 
               <div class="block">
@@ -148,22 +143,32 @@
             sigTableData: [],
             sigdialogTableVisible: false,
             filedialogTableVisible: false,
+
+            // 当前选择的签名图片的base64
             imageData: "",
 
-            // 有关PDF的data
             previewPDFDialog:false,
-            pageNo: null, // 当前页
-            pdfPageNumber: null,  // 总页数
+            pageNo: null, // PDF当前页
+            pdfPageNumber: null,  // PDF总页数
             renderingPage: false,
-            pdfData: null, // PDF的base64
+            pdfData: null,
             scale: null, // 缩放值
-            width: "",
-            height: "",
+            width: null,
+            height: null,
+
+            // 当前选择的PDF的base64
             pdfbase64: "",
+            pdfID: "",
+            pdfName: "",
             // url:"http://storage.xuetangx.com/public_assets/xuetangx/PDF/PlayerAPI_v1.0.6.pdf",
+
+            // 鼠标点击位置
             clickPosition: { x: 0, y: 0 },
 
             imageScale: 1,
+            // 传到后端去的图片大小
+            imageWidth: "",
+            imageHeight: "",
           }
       },
       created() {
@@ -203,7 +208,9 @@
         },
         chooseFile(index, row) {
           this.filedialogTableVisible = false;
-          axios.get('/api/doc/selectFileByDocPath',
+          this.pdfID = row.doc_id;
+          this.pdfName = row.doc_name;
+            axios.get('/api/doc/selectFileByDocPath',
             { params: { filePath: row.doc_path }}).then(response => {
             // console.log(response.data.file);
             this.pdfbase64 = response.data.file;
@@ -242,8 +249,8 @@
               let pageWidth = page.view[2];
               let scale = dialogWidth / pageWidth;
               let viewport = page.getViewport({ scale });
+              this.scale = scale;
 
-              // 记录内容区宽高，后期添加水印时需要
               this.width = viewport.width;
               this.height = viewport.height;
               canvas.width = this.width;
@@ -267,6 +274,11 @@
           const rect = canvas.getBoundingClientRect();
           this.clickPosition.x = event.clientX - rect.left;
           this.clickPosition.y = event.clientY - rect.top;
+
+          console.log("shiji");
+          console.log(this.clickPosition.x + "-" + this.clickPosition.y);
+
+
           this._renderImage(this.clickPosition.x, this.clickPosition.y);
         },
 
@@ -282,7 +294,9 @@
           // 等待图片加载完成
           image.onload = () => {
             // 在画布上绘制图片
-            ctx.drawImage(image, x, y, image.width * this.imageScale, image.height * this.imageScale);
+            this.imageWidth = image.width * this.imageScale;
+            this.imageHeight = image.height * this.imageScale;
+            ctx.drawImage(image, x, y, this.imageWidth, this.imageHeight);
           };
         },
 
@@ -314,11 +328,42 @@
           this.pdfData = null;
           this.pageNo = null;
           this.pdfPageNumber = null;
-          
+
           let canvas = this.$refs.myCanvas;
           let ctx = canvas.getContext("2d");
           ctx.clearRect(0, 0, canvas.width, canvas.height);
         },
+
+        saveFile() {
+          console.log("hhh");
+          // console.log(this.clickPosition.x);
+          // console.log(this.clickPosition.y);
+          console.log(this.width);
+          console.log(this.height);
+
+          this.clickPosition.y = this.height - this.clickPosition.y - this.imageHeight;
+          this.clickPosition.x /= this.scale;
+          this.clickPosition.y /= this.scale;
+          this.imageWidth /= this.scale;
+          this.imageHeight /= this.scale;
+          // this.clickPosition.y = (this.height - this.clickPosition.y) / this.scale;
+
+          const formData = new FormData();
+          formData.append('imageDataUrl', this.imageData);
+          formData.append('positionX', parseFloat(this.clickPosition.x));
+          formData.append('positionY', parseFloat(this.clickPosition.y));
+          formData.append('width',  parseFloat(this.imageWidth));
+          formData.append('height', parseFloat(this.imageHeight));
+          formData.append('pageNo', parseInt(this.pageNo));
+          formData.append('pdfID', parseInt(this.pdfID));
+          formData.append('pdfName', this.pdfName);
+          axios.post('/api/doc/test', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          });
+          this.clearFileAndImage();
+        }
       }
     }
 </script>
@@ -343,5 +388,13 @@
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+  .left-button {
+    border-radius: 10px; /* 圆角半径 */
+    width: 270px;
+    height: 70px;
+    font-size: 19px;
+    font-family: PingFang SC;
+    margin-bottom: 10px;
   }
 </style>

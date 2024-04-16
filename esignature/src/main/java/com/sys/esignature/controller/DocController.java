@@ -1,16 +1,25 @@
 package com.sys.esignature.controller;
 
+import com.itextpdf.io.image.ImageData;
+import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
+import com.itextpdf.layout.element.Image;
 import com.sys.esignature.entity.Document;
+//import com.itextpdf.layout.Document as document;
 import com.sys.esignature.entity.User;
 import com.sys.esignature.service.DocService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -27,9 +36,7 @@ public class DocController {
     @RequestMapping("/upload")
     public String handleFileUpload(@RequestParam("file") MultipartFile file) {
 
-        if (file.isEmpty()) {
-            return "上传失败，请选择文件";
-        }
+        if (file.isEmpty()) { return "上传失败，请选择文件"; }
 
         try {
             // 获取文件名并构建文件保存路径
@@ -96,7 +103,8 @@ public class DocController {
             byte[] fileBytes = Files.readAllBytes(Paths.get(filePath));
             // 将字节数组转换为 Base64 编码的字符串
             String base64File = Base64.getEncoder().encodeToString(fileBytes);
-            FileMap.put("file", "data:application/octet-stream;base64," + base64File);
+            FileMap.put("file", base64File);
+            System.out.println("data:application/pdf;base64," + base64File);
         }
         catch (IOException e) { e.printStackTrace(); }
         return FileMap;
@@ -113,4 +121,59 @@ public class DocController {
 
         return docService.deleteDocByDocId(doc_id);
     }
+
+    @PostMapping("/test")
+    public String test(
+            @RequestParam("imageDataUrl") String imageDataUrl,
+            @RequestParam("positionX") float positionX,
+            @RequestParam("positionY") float positionY,
+            @RequestParam("width") float width,
+            @RequestParam("height") float height,
+            @RequestParam("pageNo") int pageNo,
+            @RequestParam("pdfID") int pdfID,
+            @RequestParam("pdfName") String pdfName) {
+
+        // 输入PDF文件路径
+        String inputPdfPath = "C:/Users/lenovo/Desktop/undergraduate_design/files/"
+                + pdfName + ".pdf";
+        // 输出PDF文件路径
+        String outputPdfPath = "C:/Users/lenovo/Desktop/undergraduate_design/files/"
+                + "temp.pdf";
+
+        try {
+            // 创建一个临时文件 添加进去 然后删掉原来的 临时文件改名
+            String[] parts = imageDataUrl.split(",");
+            byte[] imageBytes = Base64.getDecoder().decode(parts[1]);
+            ImageData imageData = ImageDataFactory.create(imageBytes);
+
+            PdfReader reader = new PdfReader(inputPdfPath);
+            PdfWriter writer = new PdfWriter(outputPdfPath);
+            PdfDocument pdfDocument = new PdfDocument(reader, writer);
+
+            PdfPage page = pdfDocument.getPage(pageNo);
+            PdfCanvas pdfCanvas = new PdfCanvas(page);
+//            System.out.println(page.getPageSize().getHeight());
+
+            Rectangle rect = new Rectangle(positionX, positionY, width, height);
+            pdfCanvas.addImageFittedIntoRectangle(imageData, rect, true);
+            pdfDocument.close();
+            reader.close();
+
+            // 删除原始 PDF 文件
+            Files.deleteIfExists(Paths.get(inputPdfPath));
+            // 重命名临时文件为原始文件的名称
+            Files.move(Paths.get(outputPdfPath), Paths.get(inputPdfPath));
+
+            // 这里还需要更新数据库
+
+            return "Image added to PDF successfully.";
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Failed to add image to PDF.";
+        }
+    }
+
+
+
 }
