@@ -159,6 +159,7 @@
             // 当前选择的PDF的base64
             pdfbase64: "",
             pdfID: "",
+            sigID: "",
             pdfName: "",
             // url:"http://storage.xuetangx.com/public_assets/xuetangx/PDF/PlayerAPI_v1.0.6.pdf",
 
@@ -205,6 +206,7 @@
         chooseSig(index, row) {
           this.sigdialogTableVisible = false;
           this.imageData = row.image;
+          this.sigID = row.sig_id;
         },
         chooseFile(index, row) {
           this.filedialogTableVisible = false;
@@ -335,18 +337,11 @@
         },
 
         saveFile() {
-          console.log("hhh");
-          // console.log(this.clickPosition.x);
-          // console.log(this.clickPosition.y);
-          console.log(this.width);
-          console.log(this.height);
-
           this.clickPosition.y = this.height - this.clickPosition.y - this.imageHeight;
           this.clickPosition.x /= this.scale;
           this.clickPosition.y /= this.scale;
           this.imageWidth /= this.scale;
           this.imageHeight /= this.scale;
-          // this.clickPosition.y = (this.height - this.clickPosition.y) / this.scale;
 
           const formData = new FormData();
           formData.append('imageDataUrl', this.imageData);
@@ -356,12 +351,14 @@
           formData.append('height', parseFloat(this.imageHeight));
           formData.append('pageNo', parseInt(this.pageNo));
           formData.append('pdfID', parseInt(this.pdfID));
+          formData.append('sigID', parseInt(this.sigID));
           formData.append('pdfName', this.pdfName);
-          axios.post('/api/doc/test', formData, {
+          axios.post('/api/doc/addSigToFile', formData, {
             headers: {
               'Content-Type': 'multipart/form-data'
             }
           });
+          this.$message.success('签名成功添加入文件');
           this.clearFileAndImage();
         }
       }

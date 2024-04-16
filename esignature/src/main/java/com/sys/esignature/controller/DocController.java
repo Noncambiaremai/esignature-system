@@ -122,16 +122,20 @@ public class DocController {
         return docService.deleteDocByDocId(doc_id);
     }
 
-    @PostMapping("/test")
-    public String test(
+    @PostMapping("/addSigToFile")
+    public String addSigToFile(
             @RequestParam("imageDataUrl") String imageDataUrl,
             @RequestParam("positionX") float positionX,
             @RequestParam("positionY") float positionY,
             @RequestParam("width") float width,
             @RequestParam("height") float height,
             @RequestParam("pageNo") int pageNo,
-            @RequestParam("pdfID") int pdfID,
+            @RequestParam("pdfID") int doc_id,
+            @RequestParam("sigID") int sigID,
             @RequestParam("pdfName") String pdfName) {
+
+        System.out.println(doc_id);
+        System.out.println(sigID);
 
         // 输入PDF文件路径
         String inputPdfPath = "C:/Users/lenovo/Desktop/undergraduate_design/files/"
@@ -152,7 +156,6 @@ public class DocController {
 
             PdfPage page = pdfDocument.getPage(pageNo);
             PdfCanvas pdfCanvas = new PdfCanvas(page);
-//            System.out.println(page.getPageSize().getHeight());
 
             Rectangle rect = new Rectangle(positionX, positionY, width, height);
             pdfCanvas.addImageFittedIntoRectangle(imageData, rect, true);
@@ -164,13 +167,17 @@ public class DocController {
             // 重命名临时文件为原始文件的名称
             Files.move(Paths.get(outputPdfPath), Paths.get(inputPdfPath));
 
-            // 这里还需要更新数据库
+            // 这里更新数据库
+            // id doc_id sig_id user_id sig_time
+            long timeStamp = System.currentTimeMillis();
+            String user_id = "13169901112";
+            docService.addSigToFile(doc_id, sigID, user_id, timeStamp);
 
-            return "Image added to PDF successfully.";
+            return "签名成功添加入文件";
 
         } catch (IOException e) {
             e.printStackTrace();
-            return "Failed to add image to PDF.";
+            return "签名未能添加入文件";
         }
     }
 

@@ -23,4 +23,8 @@ public class DocService {
     public boolean deleteDocByDocId(Integer doc_id) {
         return docRepository.deleteDocByDocId(doc_id);
     }
+
+    public void addSigToFile(int doc_id, int sigID, String user_id, long timeStamp) {
+        docRepository.addSigToFile(doc_id, sigID, user_id, timeStamp);
+    }
 }

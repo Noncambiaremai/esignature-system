@@ -53,4 +53,28 @@ public class DocRepository {
         nativeQuery.executeUpdate();
         return true;
     }
+
+    public void addSigToFile(int doc_id, int sigID, String user_id, long timeStamp) {
+        Timestamp timestamp = new Timestamp(timeStamp);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String sig_time = sdf.format(timestamp);
+
+        // 创建更新文档状态的查询
+        StringBuilder updateSql = new StringBuilder();
+        updateSql.append("UPDATE document SET doc_status = 1 WHERE doc_id = :doc_id");
+        Query updateQuery = entityManager.createNativeQuery(updateSql.toString());
+        updateQuery.setParameter("doc_id", doc_id);
+        updateQuery.executeUpdate();
+
+        // 创建插入记录的查询
+        StringBuilder insertSql = new StringBuilder();
+        insertSql.append("INSERT INTO record (doc_id, sig_id, user_id, sig_time) ");
+        insertSql.append("VALUES (:doc_id, :sig_id, :user_id, :sig_time)");
+        Query insertQuery = entityManager.createNativeQuery(insertSql.toString());
+        insertQuery.setParameter("doc_id", doc_id);
+        insertQuery.setParameter("sig_id", sigID);
+        insertQuery.setParameter("user_id", user_id);
+        insertQuery.setParameter("sig_time", sig_time);
+        insertQuery.executeUpdate();
+    }
 }
