@@ -134,9 +134,6 @@ public class DocController {
             @RequestParam("sigID") int sigID,
             @RequestParam("pdfName") String pdfName) {
 
-        System.out.println(doc_id);
-        System.out.println(sigID);
-
         // 输入PDF文件路径
         String inputPdfPath = "C:/Users/lenovo/Desktop/undergraduate_design/files/"
                 + pdfName + ".pdf";
@@ -145,35 +142,41 @@ public class DocController {
                 + "temp.pdf";
 
         try {
-            // 创建一个临时文件 添加进去 然后删掉原来的 临时文件改名
             String[] parts = imageDataUrl.split(",");
             byte[] imageBytes = Base64.getDecoder().decode(parts[1]);
             ImageData imageData = ImageDataFactory.create(imageBytes);
 
             PdfReader reader = new PdfReader(inputPdfPath);
-            PdfWriter writer = new PdfWriter(outputPdfPath);
-            PdfDocument pdfDocument = new PdfDocument(reader, writer);
 
-            PdfPage page = pdfDocument.getPage(pageNo);
-            PdfCanvas pdfCanvas = new PdfCanvas(page);
+            // 检查是否成功打开 PDF 文件
+            if (reader.isOpenedWithFullPermission()) {
+                // 如果成功打开，则执行后续操作
+                PdfWriter writer = new PdfWriter(outputPdfPath);
+                PdfDocument pdfDocument = new PdfDocument(reader, writer);
 
-            Rectangle rect = new Rectangle(positionX, positionY, width, height);
-            pdfCanvas.addImageFittedIntoRectangle(imageData, rect, true);
-            pdfDocument.close();
-            reader.close();
+                PdfPage page = pdfDocument.getPage(pageNo);
+                PdfCanvas pdfCanvas = new PdfCanvas(page);
 
-            // 删除原始 PDF 文件
-            Files.deleteIfExists(Paths.get(inputPdfPath));
-            // 重命名临时文件为原始文件的名称
-            Files.move(Paths.get(outputPdfPath), Paths.get(inputPdfPath));
+                Rectangle rect = new Rectangle(positionX, positionY, width, height);
+                pdfCanvas.addImageFittedIntoRectangle(imageData, rect, true);
+                pdfDocument.close();
+                reader.close();
 
-            // 这里更新数据库
-            // id doc_id sig_id user_id sig_time
-            long timeStamp = System.currentTimeMillis();
-            String user_id = "13169901112";
-            docService.addSigToFile(doc_id, sigID, user_id, timeStamp);
+                // 删除原始 PDF 文件
+                Files.deleteIfExists(Paths.get(inputPdfPath));
+                // 重命名临时文件为原始文件的名称
+                Files.move(Paths.get(outputPdfPath), Paths.get(inputPdfPath));
 
-            return "签名成功添加入文件";
+                // 更新数据库
+                long timeStamp = System.currentTimeMillis();
+                String user_id = "13169901112";
+                docService.addSigToFile(doc_id, sigID, user_id, timeStamp);
+
+                return "签名成功添加入文件";
+            } else {
+                // 如果无法完全打开，返回错误消息
+                return "无法打开 PDF 文件";
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
