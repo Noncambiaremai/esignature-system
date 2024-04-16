@@ -21,16 +21,6 @@
         </div>
       </el-card>
 
-
-      <el-card class="box-card">
-        <div slot="header" class="clearfix">
-          <span>系统公告</span>
-        </div>
-        <div class="text item">
-          <p>系统升级公告：最新版本已发布，新增了XXX功能。请及时更新您的应用。</p>
-        </div>
-      </el-card>
-
       <el-card class="box-card">
         <div slot="header" class="clearfix">
           <span>联系方式</span>

@@ -26,7 +26,7 @@ public class SigController {
     @PostMapping("/upload")
     public String handleSigUpload(@RequestParam("imageDataUrl") String imageDataUrl) {
 
-        System.out.println(imageDataUrl);
+//        System.out.println(imageDataUrl);
         if (imageDataUrl.isEmpty()) {
             return "上传失败，请选择签名图片";
         }

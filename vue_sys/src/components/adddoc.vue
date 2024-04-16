@@ -11,7 +11,7 @@
         multiple>
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-        <div class="el-upload__tip" slot="tip">可接受文件格式：word / pdf / excel</div>
+        <div class="el-upload__tip" slot="tip">可接受文件格式：PDF</div>
       </el-upload>
     </Menu>
   </div>
@@ -40,8 +40,8 @@ import Menu from "@/components/menu.vue";
             // console.log('文件名', file.name);
             const extension = file.name.split('.').pop(); // 获取文件扩展名
             // console.log('文件扩展名', extension);
-            if (!['pdf', 'docx', 'xlsx'].includes(extension)) {
-              this.$message.error('只能上传word、pdf或excel格式的文件');
+            if (!['pdf'].includes(extension)) {
+              this.$message.error('只能上传pdf格式的文件');
               return false; // 取消上传
             }
             return true; // 允许上传
