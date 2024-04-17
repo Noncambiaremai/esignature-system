@@ -3,20 +3,22 @@
     <el-form ref="enrollForm" class="enroll-form">
       <h3 class="title">新用户注册</h3>
       <el-form-item prop="userId">
-        <el-input placeholder="手机号">
+        <el-input v-model="userId"  placeholder="手机号">
           <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon" />
         </el-input>
 
       </el-form-item>
       <el-form-item prop="userPassword">
-        <el-input placeholder="密码">
+        <el-input type="password" v-model="userPassword"  placeholder="密码">
           <svg-icon slot="prefix" icon-class="password" class="el-input__icon input-icon" />
         </el-input>
       </el-form-item>
 
       <el-form-item>
-        <el-button style="width: 400px" @click="toggleCamera">打开 / 关闭摄像头</el-button>
+        <el-button style="border: 1px solid grey;" @click="toggleCamera">打开 / 关闭摄像头</el-button>
+        <el-button style="border: 1px solid grey;" @click="takeImage">拍照录入人脸</el-button>
       </el-form-item>
+
 
       <el-form-item v-show="cameraVisible" label="摄像头">
         <div class="container" >
@@ -26,7 +28,7 @@
       </el-form-item>
 
       <el-form-item style="width:100%;">
-        <el-button size="medium" type="primary" style="width: 150px">注 册</el-button>
+        <el-button size="medium" type="primary" style="width: 150px" @click="toEnroll">注 册</el-button>
         <el-button size="medium" type="primary" style="width: 150px" @click="goback">返 回</el-button>
       </el-form-item>
     </el-form>
@@ -41,6 +43,7 @@
     FACEMESH_LIPS } from '@mediapipe/face_mesh/face_mesh.js';
   import { Camera } from '@mediapipe/camera_utils/camera_utils.js';
   import { drawConnectors } from '@mediapipe/drawing_utils/drawing_utils.js';
+  import axios from 'axios';
 
   export default {
     name: "enroll",
@@ -51,7 +54,13 @@
         canvasElement: null,
         canvasCtx: null,
         faceMesh: null,
-        camera: null
+        camera: null,
+
+        userId: "",
+        userPassword: "",
+        faceImage: null, // 保存人脸图片的变量
+        faceFeature: null, // 保存人脸特征的变量
+        tempFaceFeature: null // 保存人脸特征的变量
       };
     },
     methods: {
@@ -98,9 +107,11 @@
             drawConnectors(this.canvasCtx, landmarks, FACEMESH_LEFT_EYE, {color: '#30FF30'});
             drawConnectors(this.canvasCtx, landmarks, FACEMESH_LEFT_EYEBROW, {color: '#30FF30'});
             drawConnectors(this.canvasCtx, landmarks, FACEMESH_LEFT_IRIS, {color: '#30FF30'});
-            drawConnectors(this.canvasCtx, landmarks, FACEMESH_FACE_OVAL, {color: '#E0E0E0'});
+            // drawConnectors(this.canvasCtx, landmarks, FACEMESH_FACE_OVAL, {color: '#E0E0E0'});
             drawConnectors(this.canvasCtx, landmarks, FACEMESH_LIPS, {color: '#E0E0E0'});
           }
+          this.tempFaceFeature = results.multiFaceLandmarks[0];
+          // console.log(this.faceFeature);
         }
         this.canvasCtx.restore();
       },
@@ -116,11 +127,75 @@
         }
       },
       stopFaceDetection() {
+        this.cameraVisible = false;
         if (this.camera) {
           this.camera.stop();
           this.camera = null;
         }
       },
+
+      // 拍照录入人脸
+      takeImage() {
+        this.faceFeature = this.tempFaceFeature;
+        // 把当前画布上的人脸图片截下来保存到一个变量中 this.faceImage
+        // this.faceImage和this.faceFeature里面都有数据 关闭摄像头
+        if (!this.canvasElement) {
+          console.error('Canvas element is not available');
+          return;
+        }
+        const canvas = this.canvasElement;
+        const imgData = canvas.toDataURL('image/png');
+        this.faceImage = imgData;
+        this.$message({ type: 'success', message: '录入成功!' });
+        this.stopFaceDetection();
+      },
+
+      // 点击注册按钮
+      toEnroll() {
+        // 首先判断用户输入的账号是不是手机号
+        const regex = /^1[3456789]\d{9}$/;
+        if (this.userId.length !== 11 || !regex.test(this.userId)) {
+          this.$message.error('请输入11位正确格式手机号');
+          return;
+        }
+
+        axios.get('/api/user/isAccountExists', { params: { user_id: this.userId } })
+          .then(response => {
+            // 已经有人注册过了
+            if (response.data) {
+              this.$message.error('手机号已被注册，请更换');
+              this.userId = "";
+            }
+          });
+
+        if (this.userPassword.length < 6) {
+          this.$message.error('请输入至少6位数密码');
+          return;
+        }
+
+        // 能执行到这里的表示账号和密码都符合要求
+        if (this.faceImage && this.faceFeature) {
+          const formData = new FormData();
+          formData.append('userId', this.userId);
+          formData.append('userPassword', this.userPassword);
+          formData.append('faceImage', this.faceImage);
+          formData.append('faceFeature', this.faceFeature);
+          axios.post('/api/user/register', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          }).then(response => {
+            // 处理注册成功的逻辑
+            this.$message({ type: 'success', message: '注册成功!' });
+          }).catch(error => {
+            // 处理注册失败的逻辑
+            this.$message.error('注册失败，请稍后重试');
+          });
+        }
+        else this.$message.error('未录入人脸，不可注册');
+
+      }
+
     },
     mounted() {
       this.initFaceMesh();
