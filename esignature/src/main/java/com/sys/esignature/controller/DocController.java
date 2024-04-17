@@ -15,11 +15,14 @@ import com.sys.esignature.entity.Document;
 import com.sys.esignature.entity.User;
 import com.sys.esignature.service.DocService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -184,6 +187,25 @@ public class DocController {
         }
     }
 
+    @GetMapping("/downloadDoc")
+    @ResponseBody
+    public ResponseEntity<byte[]> downloadDoc(@RequestParam String doc_name) throws IOException {
+        // 根据文件路径创建 File 对象
+        File file = new File(UPLOAD_PATH + "/" + doc_name + ".pdf");
+        System.out.println(UPLOAD_PATH + "/" + doc_name + ".pdf");
 
+        // 检查文件是否存在
+        if (!file.exists() || !file.isFile()) {
+            return ResponseEntity.notFound().build(); // 如果文件不存在，返回 404
+        }
 
+        // 读取文件内容
+        Path path = Paths.get(UPLOAD_PATH + "/" + doc_name + ".pdf");
+        byte[] fileBytes = Files.readAllBytes(path);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header("Content-Disposition", "attachment; filename=\"" + doc_name + "\"")
+                .body(fileBytes);
+    }
 }

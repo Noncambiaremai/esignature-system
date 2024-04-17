@@ -59,6 +59,10 @@
                 <!--@click="handleEdit(scope.$index, scope.row)">下载</el-button>-->
               <el-button
                 size="mini"
+                type="success"
+                @click="handleDownload(scope.$index, scope.row)">下载</el-button>
+              <el-button
+                size="mini"
                 type="danger"
                 @click="handleDelete(scope.$index, scope.row)">删除</el-button>
             </div>
@@ -109,6 +113,27 @@ import PDF from 'vue-pdf';
             }).catch(() => { this.$message({ type: 'info', message: '已取消删除' });
             });
           },
+
+          // 下载PDF文件
+          handleDownload(index, row) {
+            axios.get('/api/doc/downloadDoc', {
+              params: { doc_name: row.doc_name },
+              responseType: 'blob' // 指定响应类型为 Blob
+            })
+              .then(response => {
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', `${row.doc_name}.pdf`); // 使用行数据中的文档名称
+                document.body.appendChild(link);
+                link.click();
+                this.$message({ type: 'success', message: '下载成功!' });
+              })
+              .catch(error => {
+                console.error('下载PDF出错：', error);
+                this.$message({ type: 'error', message: '下载失败，请重试!' });
+              });
+          }
         }
     }
 </script>
@@ -120,8 +145,5 @@ import PDF from 'vue-pdf';
   .button-group {
     display: flex; /* 设置为弹性布局 */
     margin-bottom: 5px; /* 设置按钮组之间的垂直间距 */
-  }
-  .button-group-single {
-    display: block; /* 设置为块级元素 */
   }
 </style>
