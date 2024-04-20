@@ -20,6 +20,7 @@
     "element-ui": "^2.15.14",
     "node-sass": "^6.0.1",
     "sass-loader": "^10.5.2",
+    "pdfjs-dist": "^2.6.347",
     "socket.io-client": "^4.7.4",
     "stylus": "^0.62.0",
     "vue": "^2.5.2",
