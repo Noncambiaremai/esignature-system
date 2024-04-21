@@ -18,7 +18,7 @@ public class RecController {
     private RecService recService;
 
     @GetMapping("/selectRecordList")
-    public List<Map<String, Object>> selectRecordList() {
-        return recService.selectRecordList();
+    public List<Map<String, Object>> selectRecordList(String userId) {
+        return recService.selectRecordList(userId);
     }
 }

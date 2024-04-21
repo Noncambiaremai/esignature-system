@@ -37,7 +37,7 @@ public class DocController {
 
     @CrossOrigin(origins = "http://localhost:8081")
     @RequestMapping("/upload")
-    public String handleFileUpload(@RequestParam("file") MultipartFile file) {
+    public String handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("userId") String userId) {
 
         if (file.isEmpty()) { return "上传失败，请选择文件"; }
 
@@ -59,8 +59,7 @@ public class DocController {
             String doc_path = UPLOAD_PATH + "/" + doc_name + "." + doc_type;
 
             // 插入数据库
-            // user_id 还没写
-            docService.uploadFiles(doc_name, doc_type, doc_path, timeStamp);
+            docService.uploadFiles(doc_name, doc_type, doc_path, timeStamp, userId);
 
             // 将文件保存到指定路径
             File dest = new File(doc_path);
@@ -74,10 +73,9 @@ public class DocController {
         }
     }
 
-    // UserId还没传进来
     @GetMapping("/selectAllByUserId")
-    public List<Map<String, Object>> selectAllByUserId() {
-        List<Document> documents = docService.selectAllByUserId();
+    public List<Map<String, Object>> selectAllByUserId(String userId) {
+        List<Document> documents = docService.selectAllByUserId(userId);
         List<Map<String, Object>> documentsWithImage = new ArrayList<>();
 
         for (Document document : documents) {
@@ -97,6 +95,7 @@ public class DocController {
         return documentsWithImage;
     }
 
+    // 选择需要渲染在前端的PDF文件
     @GetMapping("/selectFileByDocPath")
     public Map<String, Object> selectFileByDocPath(@RequestParam("filePath") String filePath) {
         System.out.println(filePath);
@@ -135,7 +134,8 @@ public class DocController {
             @RequestParam("pageNo") int pageNo,
             @RequestParam("pdfID") int doc_id,
             @RequestParam("sigID") int sigID,
-            @RequestParam("pdfName") String pdfName) {
+            @RequestParam("pdfName") String pdfName,
+            @RequestParam("userId") String user_id) {
 
         // 输入PDF文件路径
         String inputPdfPath = "C:/Users/lenovo/Desktop/undergraduate_design/files/"
@@ -144,6 +144,7 @@ public class DocController {
         String outputPdfPath = "C:/Users/lenovo/Desktop/undergraduate_design/files/"
                 + "temp.pdf";
 
+
         try {
             String[] parts = imageDataUrl.split(",");
             byte[] imageBytes = Base64.getDecoder().decode(parts[1]);
@@ -151,35 +152,28 @@ public class DocController {
 
             PdfReader reader = new PdfReader(inputPdfPath);
 
-            // 检查是否成功打开 PDF 文件
-            if (reader.isOpenedWithFullPermission()) {
-                // 如果成功打开，则执行后续操作
-                PdfWriter writer = new PdfWriter(outputPdfPath);
-                PdfDocument pdfDocument = new PdfDocument(reader, writer);
+            PdfWriter writer = new PdfWriter(outputPdfPath);
+            PdfDocument pdfDocument = new PdfDocument(reader, writer);
 
-                PdfPage page = pdfDocument.getPage(pageNo);
-                PdfCanvas pdfCanvas = new PdfCanvas(page);
+            PdfPage page = pdfDocument.getPage(pageNo);
+            PdfCanvas pdfCanvas = new PdfCanvas(page);
 
-                Rectangle rect = new Rectangle(positionX, positionY, width, height);
-                pdfCanvas.addImageFittedIntoRectangle(imageData, rect, true);
-                pdfDocument.close();
-                reader.close();
+            Rectangle rect = new Rectangle(positionX, positionY, width, height);
+            pdfCanvas.addImageFittedIntoRectangle(imageData, rect, true);
+            pdfDocument.close();
+            reader.close();
 
-                // 删除原始 PDF 文件
-                Files.deleteIfExists(Paths.get(inputPdfPath));
-                // 重命名临时文件为原始文件的名称
-                Files.move(Paths.get(outputPdfPath), Paths.get(inputPdfPath));
+            // 删除原始 PDF 文件
+            Files.deleteIfExists(Paths.get(inputPdfPath));
+            // 重命名临时文件为原始文件的名称
+            Files.move(Paths.get(outputPdfPath), Paths.get(inputPdfPath));
 
-                // 更新数据库
-                long timeStamp = System.currentTimeMillis();
-                String user_id = "13169901112";
-                docService.addSigToFile(doc_id, sigID, user_id, timeStamp);
+            // 更新数据库签名日志
+            long timeStamp = System.currentTimeMillis();
+//          String user_id = "13169901112";
+            docService.addSigToFile(doc_id, sigID, user_id, timeStamp);
 
-                return "签名成功添加入文件";
-            } else {
-                // 如果无法完全打开，返回错误消息
-                return "无法打开 PDF 文件";
-            }
+            return "签名成功添加入文件";
 
         } catch (IOException e) {
             e.printStackTrace();

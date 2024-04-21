@@ -13,7 +13,7 @@ public class RecService {
     @Autowired
     private RecRepository recRepository;
 
-    public List<Map<String, Object>> selectRecordList() {
-        return recRepository.selectRecordList();
+    public List<Map<String, Object>> selectRecordList(String userId) {
+        return recRepository.selectRecordList(userId);
     }
 }

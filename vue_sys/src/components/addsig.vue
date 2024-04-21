@@ -195,7 +195,8 @@
         // 调用后端
         const formData = new FormData();
         formData.append('imageDataUrl', this.mirroredImageData);
-
+        formData.append('userId', JSON.parse(sessionStorage.getItem('currentUser'))[1]);
+        // JSON.parse(sessionStorage.getItem('currentUser'))[1]
         axios.post('/api/sig/upload', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'

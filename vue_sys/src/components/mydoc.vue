@@ -93,7 +93,8 @@ import PDF from 'vue-pdf';
         },
         methods: {
           selectFileList() {
-            axios.get('/api/doc/selectAllByUserId').then(response => {
+            axios.get('/api/doc/selectAllByUserId',
+              { params: { userId: JSON.parse(sessionStorage.getItem('currentUser'))[1] }}).then(response => {
               this.tableData = response.data;
             }).catch(error => {
               console.error('Failed to fetch file list:', error);

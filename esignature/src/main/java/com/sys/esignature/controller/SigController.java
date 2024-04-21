@@ -24,7 +24,7 @@ public class SigController {
 
     @CrossOrigin(origins = "http://localhost:8081")
     @PostMapping("/upload")
-    public String handleSigUpload(@RequestParam("imageDataUrl") String imageDataUrl) {
+    public String handleSigUpload(@RequestParam("imageDataUrl") String imageDataUrl, @RequestParam("userId") String userId) {
 
 //        System.out.println(imageDataUrl);
         if (imageDataUrl.isEmpty()) {
@@ -43,9 +43,7 @@ public class SigController {
 
         try {
             // 插入数据库
-            // user_id 还没写
-            // id sig_id sig_name sig_path create_time user_id is_deleted
-            sigService.uploadSigs(sig_name, sig_path, timeStamp);
+            sigService.uploadSigs(sig_name, sig_path, timeStamp, userId);
 
             // 下载图像数据并保存到指定路径
             String[] parts = imageDataUrl.split(",");
@@ -60,10 +58,9 @@ public class SigController {
         }
     }
 
-    // UserId还没传进来
     @GetMapping("/selectAllByUserId")
-    public List<Map<String, Object>> selectAllByUserId() {
-        List<Signature> signatures = sigService.selectAllByUserId();
+    public List<Map<String, Object>> selectAllByUserId(String userId) {
+        List<Signature> signatures = sigService.selectAllByUserId(userId);
         List<Map<String, Object>> signaturesWithImage = new ArrayList<>();
 
         for (Signature signature : signatures) {

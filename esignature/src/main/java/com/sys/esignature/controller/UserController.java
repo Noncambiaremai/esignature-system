@@ -33,8 +33,24 @@ public class UserController {
 //        return userService.getUserById(id);
 //    }
 
-    @PostMapping("/getUser")
-    public List<User> getUser(@RequestBody User user) {
-        return userService.getUser(user);
+    @PostMapping("/login")
+    public List<User> login(@RequestParam("userId") String userId, @RequestParam("userPassword") String userPassword) {
+        return userService.login(userId, userPassword);
+    }
+
+    @GetMapping("/isAccountExists")
+    public boolean isAccountExists(@RequestParam("user_id") String userId) {
+        return userService.isAccountExists(userId);
+    }
+
+    @PostMapping("/register")
+    public void register(
+            @RequestParam("userId") String userId,
+            @RequestParam("userPassword") String userPassword,
+            @RequestParam("faceImage") String faceImage,
+            @RequestParam("faceFeature") String faceFeature
+    ) {
+
+
     }
 }

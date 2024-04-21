@@ -74,7 +74,8 @@
         },
         methods: {
           selectRecordList() {
-            axios.get('/api/rec/selectRecordList').then(response => {
+            axios.get('/api/rec/selectRecordList',
+              { params: { userId: JSON.parse(sessionStorage.getItem('currentUser'))[1] }}).then(response => {
               this.tableData = response.data;
               console.log(this.tableData);
             }).catch(error => {

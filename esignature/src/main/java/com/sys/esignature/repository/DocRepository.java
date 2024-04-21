@@ -17,12 +17,10 @@ public class DocRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public void uploadFiles(String doc_name, String doc_type, String doc_path, long timeStamp) {
+    public void uploadFiles(String doc_name, String doc_type, String doc_path, long timeStamp, String userId) {
         Timestamp timestamp = new Timestamp(timeStamp);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String update_time = sdf.format(timestamp);
-        // userid还未处理
-        String user_id = "13169901112";
         StringBuilder sql = new StringBuilder();
         sql.append("INSERT INTO document (doc_id, doc_name, doc_type, doc_path, update_time, user_id)\n" +
                 "SELECT IFNULL(MAX(id) + 1, 1) AS next_id, :doc_name, :doc_type, :doc_path, :update_time, :user_id\n" +
@@ -32,15 +30,15 @@ public class DocRepository {
         nativeQuery.setParameter("doc_type", doc_type);
         nativeQuery.setParameter("doc_path", doc_path);
         nativeQuery.setParameter("update_time", update_time);
-        nativeQuery.setParameter("user_id", user_id);
+        nativeQuery.setParameter("user_id", userId);
         nativeQuery.executeUpdate();
     }
 
-    public List<Document> selectAllByUserId() {
-        String sql = "SELECT * FROM document WHERE is_deleted = 0";
+    public List<Document> selectAllByUserId(String userId) {
+        String sql = "SELECT * FROM document WHERE user_id = :user_id AND is_deleted = 0";
         List<Document> documents = entityManager
                 .createNativeQuery(sql, Document.class) // 将查询结果映射为Document对象
-//                .setParameter("userId", userId)
+                .setParameter("user_id", userId)
                 .getResultList();
         return documents;
     }

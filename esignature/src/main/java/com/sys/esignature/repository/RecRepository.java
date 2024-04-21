@@ -18,14 +18,15 @@ public class RecRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<Map<String, Object>> selectRecordList() {
+    public List<Map<String, Object>> selectRecordList(String userId) {
         String sql = "SELECT r.sig_time, d.doc_name, s.sig_name\n" +
                 "FROM record r\n" +
                 "LEFT OUTER JOIN signature s ON r.sig_id = s.sig_id\n" +
                 "LEFT OUTER JOIN document d ON r.doc_id = d.doc_id\n" +
-                "WHERE r.is_deleted = 0";
+                "WHERE r.user_id = :user_id AND r.is_deleted = 0";
 
         Query query = entityManager.createNativeQuery(sql);
+        query.setParameter("user_id", userId);
 
         List<Object[]> resultList = query.getResultList();
         List<Map<String, Object>> mappedResultList = new ArrayList<>();

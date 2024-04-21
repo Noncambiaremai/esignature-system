@@ -12,12 +12,12 @@ public class DocService {
     @Autowired
     private DocRepository docRepository;
 
-    public void uploadFiles(String doc_name, String doc_type, String doc_path, long timeStamp) {
-        docRepository.uploadFiles(doc_name, doc_type, doc_path, timeStamp);
+    public void uploadFiles(String doc_name, String doc_type, String doc_path, long timeStamp, String userId) {
+        docRepository.uploadFiles(doc_name, doc_type, doc_path, timeStamp, userId);
     }
 
-    public List<Document> selectAllByUserId() {
-        return docRepository.selectAllByUserId();
+    public List<Document> selectAllByUserId(String userId) {
+        return docRepository.selectAllByUserId(userId);
     }
 
     public boolean deleteDocByDocId(Integer doc_id) {

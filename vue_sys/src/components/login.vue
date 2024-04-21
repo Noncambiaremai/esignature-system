@@ -3,18 +3,18 @@
     <el-form ref="loginForm" class="login-form">
       <h3 class="title">欢迎登录手势识别电子签名系统</h3>
       <el-form-item prop="userId">
-        <el-input placeholder="手机号">
+        <el-input v-model="userId" placeholder="手机号">
           <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon" />
         </el-input>
       </el-form-item>
       <el-form-item prop="userPassword">
-        <el-input placeholder="密码">
+        <el-input v-model="userPassword"  placeholder="密码">
           <svg-icon slot="prefix" icon-class="password" class="el-input__icon input-icon" />
         </el-input>
       </el-form-item>
 
       <el-form-item style="width:100%;">
-        <el-button size="medium" type="primary" style="width: 150px" >登 录</el-button>
+        <el-button size="medium" type="primary" style="width: 150px" @click="tologin">登 录</el-button>
         <el-button size="medium" type="primary" style="width: 150px" @click="toenroll">注 册</el-button>
 
         <el-button size="medium" type="primary"
@@ -30,6 +30,12 @@ import axios from 'axios';
 
 export default {
     name: "login",
+    data() {
+      return {
+        userId: "",
+        userPassword: ""
+      }
+    },
     methods: {
       // 注册按钮跳转
       toenroll(){
@@ -37,8 +43,42 @@ export default {
       },
       gotomenu() {
         this.$router.push({name: 'menu'});
+      },
+      tologin() {
+        const formData = new FormData();
+        formData.append('userId', this.userId);
+        formData.append('userPassword', this.userPassword);
+        axios.post('/api/user/login', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }).then(response => {
+          if (response.data.length) {
+            // console.log("登录成功");
+            sessionStorage.setItem('currentUser', JSON.stringify(response.data[0]));
+            console.log(JSON.parse(sessionStorage.getItem('currentUser'))[1]);
+            this.$router.push({name: 'home'});
+          } else {
+            this.$message.error('登录失败！');
+            // console.log("登录失败");
+          }
+
+        });
+
+
+          //
+          // AuthService.login(this.username, this.password)
+          //   .then(user => {
+          //     // 登录成功，将用户信息保存到LocalStorage中
+          //     localStorage.setItem('currentUser', JSON.stringify(user));
+          //     // 其他逻辑...
+          //   })
+          //   .catch(error => {
+          //     console.error('登录失败：', error);
+          //   });
+
       }
-      }
+    }
             // callbackend() {
             //   axios.get('/api/hello/index').then(response => {
             //     console.log(response.data);

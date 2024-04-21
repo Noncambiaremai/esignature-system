@@ -60,9 +60,11 @@
         },
         methods: {
           selectSigList() {
-            axios.get('/api/sig/selectAllByUserId').then(response => {
+            // JSON.parse(sessionStorage.getItem('currentUser'))[1]
+            axios.get('/api/sig/selectAllByUserId',
+              { params: { userId: JSON.parse(sessionStorage.getItem('currentUser'))[1] }}).then(response => {
               this.tableData = response.data;
-              console.log(this.tableData);
+              // console.log(this.tableData);
             }).catch(error => {
               console.error('Failed to fetch signature list:', error);
             });

@@ -177,7 +177,8 @@
       },
       methods: {
         selectSigList() {
-          axios.get('/api/sig/selectAllByUserId').then(response => {
+          axios.get('/api/sig/selectAllByUserId',
+            { params: { userId: JSON.parse(sessionStorage.getItem('currentUser'))[1] }}).then(response => {
             this.sigTableData = response.data;
             console.log(this.sigTableData);
           }).catch(error => {
@@ -186,7 +187,8 @@
         },
 
         selectFileList() {
-          axios.get('/api/doc/selectAllByUserId').then(response => {
+          axios.get('/api/doc/selectAllByUserId',
+            { params: { userId: JSON.parse(sessionStorage.getItem('currentUser'))[1] }}).then(response => {
             this.tableData = response.data;
           }).catch(error => {
             console.error('Failed to fetch file list:', error);
@@ -353,6 +355,8 @@
           formData.append('pdfID', parseInt(this.pdfID));
           formData.append('sigID', parseInt(this.sigID));
           formData.append('pdfName', this.pdfName);
+          formData.append('userId', JSON.parse(sessionStorage.getItem('currentUser'))[1]);
+
           axios.post('/api/doc/addSigToFile', formData, {
             headers: {
               'Content-Type': 'multipart/form-data'

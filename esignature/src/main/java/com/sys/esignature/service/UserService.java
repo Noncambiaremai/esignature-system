@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -23,7 +24,12 @@ public class UserService {
 //        return userRepository.findById(id).orElse(null);
 //    }
 //
-    public List<User> getUser(User user) {
-        return userRepository.getUser(user);
+
+    public boolean isAccountExists(String userId) {
+        return userRepository.isAccountExists(userId);
+    }
+
+    public List<User> login(String userId, String userPassword) {
+        return userRepository.login(userId, userPassword);
     }
 }

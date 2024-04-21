@@ -8,6 +8,7 @@
         action="http://localhost:8080/api/doc/upload"
         :on-success="handleSuccess"
         :before-upload="beforeUpload"
+        :data="{ userId: userId }"
         multiple>
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
@@ -27,7 +28,8 @@ import Menu from "@/components/menu.vue";
         },
         data() {
           return {
-            fileList: []
+            fileList: [],
+            userId: JSON.parse(sessionStorage.getItem('currentUser'))[1]
           }
         },
         methods: {
