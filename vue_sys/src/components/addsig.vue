@@ -63,6 +63,7 @@
         sigCanvas: null,
         sigCanvasCtx: null,
         lastFingerDistance: 0, // 上一次两个手指的距离
+        lastFingerAngleInDegrees: 0
       };
     },
     methods: {
@@ -107,27 +108,36 @@
             drawConnectors(this.canvasCtx, landmarks, HAND_CONNECTIONS, { color: '#00FF00', lineWidth: 5 });
             drawLandmarks(this.canvasCtx, landmarks, { color: '#FF0000', lineWidth: 2 });
 
-            if (landmarks[8] && landmarks[4]) {
-              const distance = Math.sqrt(Math.pow(landmarks[8].x - landmarks[4].x, 2)
-                + Math.pow(landmarks[8].y - landmarks[4].y, 2));
-              const threshold = 0.23;
+            // 判断两个手指之间的夹角
+            if (landmarks[8] && landmarks[4] && landmarks[0]) {
+              const vector1 = { x: landmarks[8].x - landmarks[0].x, y: landmarks[8].y - landmarks[0].y };
+              const vector2 = { x: landmarks[4].x - landmarks[0].x, y: landmarks[4].y - landmarks[0].y };
 
-              if (distance < threshold) {
+              const dotProduct = vector1.x * vector2.x + vector1.y * vector2.y;
+              const magnitude1 = Math.sqrt(vector1.x * vector1.x + vector1.y * vector1.y);
+              const magnitude2 = Math.sqrt(vector2.x * vector2.x + vector2.y * vector2.y);
 
+              const cosine = dotProduct / (magnitude1 * magnitude2);
+              const angle = Math.acos(cosine);
+
+              const angleInDegrees = angle * (180 / Math.PI);
+
+              const threshold = 20; // 设置阈值为20度
+              if (angleInDegrees < threshold) {
+                // 夹角小于阈值，执行相应的操作
                 const xC = landmarks[8].x;
                 const yC = landmarks[8].y;
 
                 const x = xC * this.sigCanvas.width;
                 const y = yC * this.sigCanvas.height * 1.42;
+                // 在画布上画线
                 this.drawFingerPoint(x, y);
               }
               else {
                 // 不画线 重新定位点
-                this.lastFingerDistance = 0; // 重置上一次的距离
+                this.lastFingerAngleInDegrees = 90; // 重置上一次的角度
               }
-
-              // 更新上一次两个手指的距离
-              this.lastFingerDistance = distance;
+              this.lastFingerAngleInDegrees = angleInDegrees;
             }
           }
         }
@@ -135,7 +145,8 @@
       },
       drawFingerPoint(x, y) {
         // 如果上一次的两个手指的距离大于阈值，则从上一个点绘制直线
-        if (this.lastFingerDistance < 0.23) {
+        // 上一个点是在画的 这次就连着上个点画
+          if (this.lastFingerAngleInDegrees < 20) {
           this.sigCanvasCtx.strokeStyle = '#00000c';
           this.sigCanvasCtx.lineWidth = 4;
 
@@ -145,7 +156,8 @@
           this.sigCanvasCtx.stroke();
         }
 
-        // 保存当前点的坐标作为下一次的起点
+        // 上一个点没画 这次就从当前的x y开始画
+        // 保存当前点的坐标作为起点
         this.lastX = x;
         this.lastY = y;
       },
