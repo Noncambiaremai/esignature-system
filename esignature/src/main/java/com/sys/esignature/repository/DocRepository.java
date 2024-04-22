@@ -75,4 +75,12 @@ public class DocRepository {
         insertQuery.setParameter("sig_time", sig_time);
         insertQuery.executeUpdate();
     }
+
+    public List<Document> selectAll() {
+        String sql = "SELECT * FROM document WHERE is_deleted = 0";
+        List<Document> documents = entityManager
+                .createNativeQuery(sql, Document.class) // 将查询结果映射为Document对象
+                .getResultList();
+        return documents;
+    }
 }

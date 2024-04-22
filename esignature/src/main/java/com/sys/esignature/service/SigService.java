@@ -23,4 +23,8 @@ public class SigService {
     public boolean deleteSigBySigId(Integer sig_id) {
         return sigRepository.deleteSigBySigId(sig_id);
     }
+
+    public List<Signature> selectAll() {
+        return sigRepository.selectAll();
+    }
 }

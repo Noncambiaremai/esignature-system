@@ -41,4 +41,28 @@ public class RecRepository {
 
         return mappedResultList;
     }
+
+    public List<Map<String, Object>> selectRecordListAll() {
+        String sql = "SELECT r.sig_time, d.doc_name, s.sig_name, r.user_id\n" +
+                "FROM record r\n" +
+                "LEFT OUTER JOIN signature s ON r.sig_id = s.sig_id\n" +
+                "LEFT OUTER JOIN document d ON r.doc_id = d.doc_id\n" +
+                "WHERE r.is_deleted = 0";
+
+        Query query = entityManager.createNativeQuery(sql);
+
+        List<Object[]> resultList = query.getResultList();
+        List<Map<String, Object>> mappedResultList = new ArrayList<>();
+
+        for (Object[] row : resultList) {
+            Map<String, Object> rowMap = new HashMap<>();
+            rowMap.put("sig_time", row[0]);
+            rowMap.put("doc_name", row[1]);
+            rowMap.put("sig_name", row[2]);
+            rowMap.put("user_id", row[3]);
+            mappedResultList.add(rowMap);
+        }
+
+        return mappedResultList;
+    }
 }

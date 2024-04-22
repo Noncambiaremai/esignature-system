@@ -27,4 +27,8 @@ public class DocService {
     public void addSigToFile(int doc_id, int sigID, String user_id, long timeStamp) {
         docRepository.addSigToFile(doc_id, sigID, user_id, timeStamp);
     }
+
+    public List<Document> selectAll() {
+        return docRepository.selectAll();
+    }
 }

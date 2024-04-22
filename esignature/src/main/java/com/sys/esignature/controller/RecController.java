@@ -21,4 +21,10 @@ public class RecController {
     public List<Map<String, Object>> selectRecordList(String userId) {
         return recService.selectRecordList(userId);
     }
+
+    @GetMapping("/selectRecordListAll")
+    public List<Map<String, Object>> selectRecordListAll() {
+        return recService.selectRecordListAll();
+    }
+
 }

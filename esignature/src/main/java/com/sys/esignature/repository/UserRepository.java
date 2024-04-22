@@ -50,4 +50,12 @@ public class UserRepository {
 
         return nativeQuery.getResultList();
     }
+
+    public List<User> selectAll() {
+        String sql = "SELECT * FROM user WHERE role_id = 0 AND is_deleted = 0";
+        List<User> documents = entityManager
+                .createNativeQuery(sql, User.class) // 将查询结果映射为Document对象
+                .getResultList();
+        return documents;
+    }
 }

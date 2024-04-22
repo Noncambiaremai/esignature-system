@@ -86,6 +86,35 @@ public class SigController {
         return signaturesWithImage;
     }
 
+    @GetMapping("/selectAll")
+    public List<Map<String, Object>> selectAll() {
+        List<Signature> signatures = sigService.selectAll();
+        List<Map<String, Object>> signaturesWithImage = new ArrayList<>();
+
+        for (Signature signature : signatures) {
+            Map<String, Object> signatureMap = new HashMap<>();
+            signatureMap.put("id", signature.getId());
+            signatureMap.put("sig_id", signature.getSigId());
+            signatureMap.put("sig_name", signature.getSigName());
+            signatureMap.put("sig_path", signature.getSigPath());
+            signatureMap.put("create_time", signature.getCreateTime());
+            signatureMap.put("user_id", signature.getUserId());
+
+            try {
+                // 读取图片内容为字节数组
+                byte[] imageBytes = Files.readAllBytes(Paths.get(signature.getSigPath()));
+                // 将字节数组转换为 Base64 编码的字符串
+                String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+                signatureMap.put("image", "data:image/jpeg;base64," + base64Image);
+            } catch (IOException e) {
+                // 处理异常，这里可以根据具体情况进行处理
+                e.printStackTrace();
+            }
+            signaturesWithImage.add(signatureMap);
+        }
+        return signaturesWithImage;
+    }
+
     @GetMapping("/deleteSigBySigId")
     public boolean deleteSigBySigId(Integer sig_id, String sig_path) {
         // 创建 File 对象表示要删除的文件

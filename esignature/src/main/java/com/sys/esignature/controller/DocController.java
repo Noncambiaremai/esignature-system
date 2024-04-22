@@ -202,4 +202,27 @@ public class DocController {
                 .header("Content-Disposition", "attachment; filename=\"" + doc_name + "\"")
                 .body(fileBytes);
     }
+
+    @GetMapping("/selectAll")
+    public List<Map<String, Object>> selectAll() {
+        List<Document> documents = docService.selectAll();
+        List<Map<String, Object>> documentsWithImage = new ArrayList<>();
+
+        for (Document document : documents) {
+            Map<String, Object> documentMap = new HashMap<>();
+            documentMap.put("id", document.getId());
+            documentMap.put("doc_id", document.getDocId());
+            documentMap.put("doc_name", document.getDocName());
+            documentMap.put("doc_type", document.getDocType());
+            documentMap.put("doc_path", document.getDocPath());
+            documentMap.put("update_time", document.getUpdateTime());
+            documentMap.put("doc_status", document.getDocStatus());
+            documentMap.put("download_count", document.getDownloadCount());
+            documentMap.put("user_id", document.getUserId());
+//
+            documentsWithImage.add(documentMap);
+        }
+        System.out.println(documentsWithImage);
+        return documentsWithImage;
+    }
 }

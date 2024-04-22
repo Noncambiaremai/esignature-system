@@ -5,7 +5,10 @@ import com.sys.esignature.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user")
@@ -52,5 +55,21 @@ public class UserController {
     ) {
 
 
+    }
+
+    @GetMapping("/selectAll")
+    public List<Map<String, Object>> selectAll() {
+        List<User> users = userService.selectAll();
+        List<Map<String, Object>> usersAll = new ArrayList<>();
+
+        for (User user : users) {
+            Map<String, Object> userMap = new HashMap<>();
+            userMap.put("id", user.getId());
+            userMap.put("user_id", user.getUserId());
+            userMap.put("user_name", user.getUserName());
+//
+            usersAll.add(userMap);
+        }
+        return usersAll;
     }
 }

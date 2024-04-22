@@ -32,4 +32,8 @@ public class UserService {
     public List<User> login(String userId, String userPassword) {
         return userRepository.login(userId, userPassword);
     }
+
+    public List<User> selectAll() {
+        return userRepository.selectAll();
+    }
 }

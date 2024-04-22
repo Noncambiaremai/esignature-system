@@ -10,6 +10,10 @@ import mydoc from '@/components/mydoc';
 import record from '@/components/record';
 import enroll from '@/components/enroll';
 import mergePage from '@/components/mergePage';
+import userManagement from '@/components/userManagement';
+import sigManagement from '@/components/sigManagement';
+import fileManagement from '@/components/fileManagement';
+import recManagement from '@/components/recManagement';
 
 Vue.use(Router)
 
@@ -64,6 +68,26 @@ export default new Router({
       path: '/mergePage',
       name: 'mergePage',
       component: mergePage
+    },
+    {
+      path: '/userManagement',
+      name: 'userManagement',
+      component: userManagement
+    },
+    {
+      path: '/sigManagement',
+      name: 'sigManagement',
+      component: sigManagement
+    },
+    {
+      path: '/fileManagement',
+      name: 'fileManagement',
+      component: fileManagement
+    },
+    {
+      path: '/recManagement',
+      name: 'recManagement',
+      component: recManagement
     }
   ]
 })

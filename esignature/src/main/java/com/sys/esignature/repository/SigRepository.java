@@ -50,4 +50,12 @@ public class SigRepository {
         nativeQuery.executeUpdate();
         return true;
     }
+
+    public List<Signature> selectAll() {
+        String sql = "SELECT * FROM signature WHERE is_deleted = 0";
+        List<Signature> signature = entityManager
+                .createNativeQuery(sql, Signature.class) // Signature
+                .getResultList();
+        return signature;
+    }
 }

@@ -5,13 +5,18 @@
         <!--width="200px;"-->
         <!--style="background-color: rgb(238, 241, 246); "-->
         <el-menu style="height: 100%;">
-              <el-menu-item index="1-1" @click="gotoHome"><i class="el-icon-house"></i>首页</el-menu-item>
-              <el-menu-item index="1-2" @click="gotoAddSig"><i class="el-icon-thumb"></i>添加签名</el-menu-item>
-              <el-menu-item index="1-3" @click="gotoMySig"><i class="el-icon-files"></i>我的签名</el-menu-item>
-              <el-menu-item index="1-4" @click="gotoAddDoc"><i class="el-icon-document-add"></i>添加文件</el-menu-item>
-              <el-menu-item index="1-5" @click="gotoMyDoc"><i class="el-icon-notebook-2"></i>我的文件</el-menu-item>
-              <el-menu-item index="1-6" @click="gotoMergePage"><i class="el-icon-connection"></i>合成区域</el-menu-item>
-              <el-menu-item index="1-7" @click="gotoRecord"><i class="el-icon-time"></i>签名日志</el-menu-item>
+              <el-menu-item v-show="!notAdmin" index="1-1" @click="gotoHome"><i class="el-icon-house"></i>首页</el-menu-item>
+              <el-menu-item v-show="!notAdmin" index="1-2" @click="gotoAddSig"><i class="el-icon-thumb"></i>添加签名</el-menu-item>
+              <el-menu-item v-show="!notAdmin" index="1-3" @click="gotoMySig"><i class="el-icon-files"></i>我的签名</el-menu-item>
+              <el-menu-item v-show="!notAdmin" index="1-4" @click="gotoAddDoc"><i class="el-icon-document-add"></i>添加文件</el-menu-item>
+              <el-menu-item v-show="!notAdmin" index="1-5" @click="gotoMyDoc"><i class="el-icon-notebook-2"></i>我的文件</el-menu-item>
+              <el-menu-item v-show="!notAdmin" index="1-6" @click="gotoMergePage"><i class="el-icon-connection"></i>合成区域</el-menu-item>
+              <el-menu-item v-show="!notAdmin" index="1-7" @click="gotoRecord"><i class="el-icon-time"></i>签名日志</el-menu-item>
+
+              <el-menu-item v-show="notAdmin" index="1-8" @click="gotoUserManagement"><i class="el-icon-user"></i>用户管理</el-menu-item>
+              <el-menu-item v-show="notAdmin" index="1-9" @click="gotoSigManagement"><i class="el-icon-files"></i>签名管理</el-menu-item>
+              <el-menu-item v-show="notAdmin" index="1-10" @click="gotoFileManagement"><i class="el-icon-notebook-2"></i>文件管理</el-menu-item>
+              <el-menu-item v-show="notAdmin" index="1-11" @click="gotoRecManagement"><i class="el-icon-time"></i>签名日志管理</el-menu-item>
         </el-menu>
       </el-aside>
 
@@ -60,13 +65,8 @@ import axios from 'axios';
 export default {
     name: "menu",
     data() {
-      const item = {
-        date: '2016-05-02',
-        name: 'momo',
-        address: '上海市普陀区金沙江路 1518 弄'
-      };
       return {
-        tableData: Array(20).fill(item)
+        notAdmin: JSON.parse(sessionStorage.getItem('currentUser'))[4]
       }
     },
     methods: {
@@ -91,6 +91,18 @@ export default {
       gotoRecord() {
         this.$router.push({name: 'record'});
       },
+      gotoUserManagement() {
+        this.$router.push({name: 'userManagement'});
+      },
+      gotoSigManagement() {
+        this.$router.push({name: 'sigManagement'});
+      },
+      gotoFileManagement() {
+        this.$router.push({name: 'fileManagement'});
+      },
+      gotoRecManagement() {
+        this.$router.push({name: 'recManagement'});
+      }
     }
   };
 </script>

@@ -16,4 +16,8 @@ public class RecService {
     public List<Map<String, Object>> selectRecordList(String userId) {
         return recRepository.selectRecordList(userId);
     }
+
+    public List<Map<String, Object>> selectRecordListAll() {
+        return recRepository.selectRecordListAll();
+    }
 }
