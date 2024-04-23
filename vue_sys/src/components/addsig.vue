@@ -62,7 +62,6 @@
         mirroredImageData: '',
         sigCanvas: null,
         sigCanvasCtx: null,
-        lastFingerDistance: 0, // 上一次两个手指的距离
         lastFingerAngleInDegrees: 0
       };
     },
@@ -122,7 +121,7 @@
 
               const angleInDegrees = angle * (180 / Math.PI);
 
-              const threshold = 20; // 设置阈值为20度
+              const threshold = 15; // 设置阈值为20度
               if (angleInDegrees < threshold) {
                 // 夹角小于阈值，执行相应的操作
                 const xC = landmarks[8].x;
@@ -146,7 +145,7 @@
       drawFingerPoint(x, y) {
         // 如果上一次的两个手指的距离大于阈值，则从上一个点绘制直线
         // 上一个点是在画的 这次就连着上个点画
-          if (this.lastFingerAngleInDegrees < 20) {
+          if (this.lastFingerAngleInDegrees < 15) {
           this.sigCanvasCtx.strokeStyle = '#00000c';
           this.sigCanvasCtx.lineWidth = 4;
 
